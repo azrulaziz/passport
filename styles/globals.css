@@ -1,16 +1,61 @@
-html,
-body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  background: #F0F2F5;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
 
-* {
-  box-sizing: border-box;
+@layer base {
+    .main-heading {
+      @apply text-2xl text-primary-black font-black;
+    }
+
+    .main-title {
+      @apply text-gray-9 font-bold text-xl sm:text-2xl;
+    }
+
+    .sub-title {
+      @apply text-sm text-gray-8;
+    }
+
+    .edit-profile-form {
+      @apply flex flex-wrap -mx-4 mb-80;
+    }
+
+    .edit-profile-main {
+      @apply py-2 px-4 w-full lg:w-9/12 space-y-4;
+    }
+
+    .edit-profile-side {
+      @apply py-2 px-4 w-full lg:w-3/12;
+    }
+
+    .profile-form-label {
+      @apply pb-2 text-sm text-gray-10;
+    }
+  
+    .ant-collapse-content > .ant-collapse-content-box {
+      padding: 0px 0px !important; 
+    }
+    .sub-heading {
+        @apply text-sm text-primary-black font-black;
+    }
+    
+    .active-link {
+      @apply py-3 px-4 text-xs text-primary-blue bg-blue-1 border-r-2 border-blue-4 flex space-x-2 my-2 cursor-pointer;
+    }
+
+    .link {
+      @apply py-3 px-4 text-xs text-gray-9 flex space-x-2 my-2 cursor-pointer;
+    }
+
+    .collapsed-active-link {
+      @apply py-3 px-4 text-xs text-primary-blue bg-blue-1 border-r-2 border-blue-4 flex space-x-2 my-2 cursor-pointer;
+    }
+
+    .collapsed-link {
+      @apply py-3 px-4 text-xs text-gray-9 flex space-x-2 my-2 cursor-pointer;
+    }
 }
