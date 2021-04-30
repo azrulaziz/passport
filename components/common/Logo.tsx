@@ -3,8 +3,8 @@ import Image from 'next/image'
 const Logo: React.FC = () => {
 
     return (
-        <div>
-            <Image 
+        <div className="w-14 border">
+            <img 
                 src="/501.svg" 
                 alt="500 startups logo" 
                 width={55}

@@ -1,7 +1,7 @@
 import React, {useState} from "react"
 import {PrimaryButton, LinkedinButton, GoogleButton} from 'components/common/Button'
 import { useForm, SubmitHandler} from "react-hook-form";
-import { TextInput, PasswordInput } from "components/common/Input";
+import { TextInput, PasswordInput, InputCheckbox } from "components/common/Input";
 import { useRouter } from 'next/router'
 import { useTranslation } from 'next-i18next'
 
@@ -110,7 +110,18 @@ const SignUpForm: React.FC = () => {
 
             <div className="flex items-center justify-between relative mb-1">
                 <div className="">
-                    <input
+                    <InputCheckbox 
+                        register={register}
+                        errors={errors}
+                        inputName="termsAndConditions"
+                        validation={{
+                            validate: value => value === false ? "Agreeing to terms & conditions is required" : true
+                        }}
+                        labelClassName="px-1 text-xs text-gray-10 align-middle pb-1"
+                        labelText={t('signup:terms-and-conditions')}
+                        defaultChecked={false}
+                    />
+                    {/* <input
                         id="termsAndConditions"
                         type="checkbox"
                         defaultChecked={false}
@@ -120,7 +131,7 @@ const SignUpForm: React.FC = () => {
                         }) }
                         className="checked:bg-blue-600 checked:border-transparent w-5 h-5"
                     />
-                    <label htmlFor="termsAndConditions" className="px-1 text-xs text-gray-10 align-middle pb-1">{t('signup:terms-and-conditions')}</label>
+                    <label htmlFor="termsAndConditions" className="px-1 text-xs text-gray-10 align-middle pb-1">{t('signup:terms-and-conditions')}</label> */}
                 </div>
                 {errors.termsAndConditions &&  (
                 <span role="alert" className="pl-6 absolute -bottom-2 text-xs text-red-500">{errors.termsAndConditions.message}</span>
@@ -129,15 +140,15 @@ const SignUpForm: React.FC = () => {
 
             <div className="flex items-center justify-between">
                 <div className="">
-                    <input
-                        id="newsletter"
-                        type="checkbox"
+                    <InputCheckbox 
+                        register={register}
+                        errors={errors}
+                        inputName="newsletter"
+                        validation={{}}
+                        labelClassName="px-1 text-xs text-gray-10 align-middle pb-1"
+                        labelText={t('signup:newsletter')}
                         defaultChecked={false}
-                        aria-invalid={errors.newsletter ? "true" : "false"}
-                        {...register('newsletter')}
-                        className="checked:bg-blue-600 checked:border-transparent w-5 h-5"
                     />
-                    <label htmlFor="newsletter" className="px-1 text-xs text-gray-10 align-middle pb-1">{t('signup:newsletter')}</label>
                 </div>
             </div>
 

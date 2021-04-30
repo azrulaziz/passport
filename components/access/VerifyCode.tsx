@@ -17,7 +17,7 @@ const VerifyCode: React.FC = () => {
         console.log(data)
         
         // after submit successful, route to user profile
-        router.push('/user-profile')
+        router.push('/profile')
     }
 
     const handleRequestCode = () => {

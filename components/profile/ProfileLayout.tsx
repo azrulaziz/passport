@@ -1,16 +1,20 @@
 import React from "react"
 
 interface Props {
-    main: React.ReactNode,
+    personalInfo: React.ReactNode
+    main: React.ReactNode
     side: React.ReactNode
 }
 
-const ProfileLayout: React.FC<Props> = ({main, side}) => {
+const ProfileLayout: React.FC<Props> = ({personalInfo, main, side}) => {
     return (
         <div className="flex flex-wrap -mx-2">
             <div className="p-2 w-full lg:w-9/12  ">
                 <div className="">
-                    {main}
+                    {personalInfo}
+                    <div className="my-4">
+                        {main}
+                    </div>
                 </div>
             </div>
             <div className="p-2 w-full lg:w-3/12 ">

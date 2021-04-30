@@ -1,6 +1,6 @@
 import Head from 'next/head'
-import AccessLayout from "components/user/AccessLayout"
-import SignUp from 'components/user/SignUp'
+import AccessLayout from "components/access/AccessLayout"
+import SignUp from 'components/access/SignUp'
 import SelectLanguage from "components/common/SelectLanguange"
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useTranslation } from 'next-i18next'

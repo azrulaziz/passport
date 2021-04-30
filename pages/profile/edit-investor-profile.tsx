@@ -2,23 +2,19 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
 import Layout from "components/common/Layout"
 import { useTranslation } from 'next-i18next'
-import AccountSettings from 'components/account/AccountSettings'
-import {useHeaderTitle} from 'store/useHeaderTitle'
-import { useEffect } from 'react'
+import { useRouter } from 'next/router'
+import InvestorProfileForm from 'components/profile/InvestorProfileForm'
 
-export default function Account() {
+export default function EditInvestorProfile() {
   const { t } = useTranslation('profile')
-  const setHeaderTitle = useHeaderTitle(state => state.setTitle)
-  useEffect(() => {
-      setHeaderTitle(`Account Settings`)
-  })
+  const router = useRouter()
 
   return (
     <Layout>
       <Head>
-        <title>Account Settings</title>
+        <title>{t('head-title')}</title>
       </Head>
-      <AccountSettings />
+      <InvestorProfileForm />
     </Layout>
   )
 }

@@ -1,20 +1,29 @@
-import ProfileSectionNav from './ProfileSectionNav'
-import ProfileCompletion from './ProfileCompletion';
-import { PrimaryButton } from 'components/common/Button'
-import {useForm, Controller} from "react-hook-form";
+import {useForm, Controller, useFieldArray} from "react-hook-form";
 import React, {useState, useEffect, forwardRef} from 'react'
 import FormContentPanel from './FormContentPanel';
-import { TextInputInline } from 'components/common/Input';
+import { TextInput, TextInputInline, TextArea, InputCheckbox, InputRadio, AsyncMultiSelectionInput } from 'components/common/Input';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {DownOutlined, PlusOutlined, CloseOutlined} from '@ant-design/icons'
-import AsyncSelect from 'react-select/async';
-import useList from 'lib/useList'
+import {DownOutlined, CloseOutlined} from '@ant-design/icons'
 import Select from "react-select";
+import useList from 'lib/useList'
+import ProfileFormSidePanel from "./ProfileFormSidePanel";
+
+interface Props {
+    data: any
+}
 
 type SelectObj = {
     value: string
     label: string
+}
+
+type FoundingMember = {
+    name: string
+    email: string
+    title: string
+    linkedin: string
+    isFounder: boolean
 }
 
 interface FormValues {
@@ -23,15 +32,27 @@ interface FormValues {
     companyLogo?: string
     companyFounded?: string
     companyWebsite?: string
-    sectors?: SelectObj[],
-    stage?: SelectObj,
+    sectors?: SelectObj[]
+    stage?: SelectObj
     businessModel?: string
+    describeCompany?: string
+    describeBusinessModel?: string
+    marketChannel?: string
+    useCase?: string
+    whyRightTiming?: string
+    foundingMember: FoundingMember[]
+    outsideFunding?: string
+    fundraisingTarget?: string
+    optionalLink?: string,
+    companyLocation?: string,
+    incorporatedLocation?: string
 }
 
 const sectorsOptions = [
     {value: "Biotech", label: "Biotech"},
     {value: "Impact", label: "Impact"},
     {value: "e-Commerce", label: "e-Commerce"},
+    {value: "Fintech", label: "Fintech"}
 ]
 
 const stageList = [
@@ -39,6 +60,8 @@ const stageList = [
     { value: "Pre-seed", label: "Pre-seed" },
     { value: "series A", label: "Series A" }
 ]
+
+const foundingMemberList = []
 
 const model = ["Saas", "On-demand", "Mobile App", "Marketplace", "Content", "e-Commerce", "Other", "Cloud (Usage-based)"]
 
@@ -52,23 +75,41 @@ const YearInput = forwardRef(
     ),
 );
 
-const CompanyProfileForm: React.FC = () => {
-    const [startDate, setStartDate] = useState();
+const CompanyProfileForm: React.FC<Props> = ({data}) => {
+    const [yearFounded, setYearFounded] = useState();
     const {register, control, formState: { errors }, watch , handleSubmit} = useForm<FormValues>({
         defaultValues: {
             sectors: [],
-            stage: {}
+            foundingMember: foundingMemberList.length > 0 ? foundingMemberList : [{name: "", email: "", title: "", linkedin: "", isFounder: false}]
         }
     });
 
-    const sectors = useList([])
-
-    const promiseOptions = (fn) =>
-        new Promise(resolve => {
-            setTimeout(() => {
-            resolve(fn);
-        }, 1000);
+    const {fields, append, remove} = useFieldArray({
+          control,
+          name: "foundingMember"
     });
+
+    const sectors = useList([], 3)
+
+    const dropdownOptions = (data) => {
+        if (!data) return []
+        const options = data.map(each => {
+            return {
+                value: each.value,
+                label: each.label
+            }
+        })
+        return options
+    }
+
+    const handleAddTeamMember = (): void => {
+        append({name: "", email: "", title: "", linkedin: "", isFounder: false})
+    }
+
+    const handleRemoveTeamMember = (index): void => {
+        console.log(index)
+        remove(index + 1)
+    }
 
     const handleUpdateCompanyProfile = (data: FormValues) => {
         // mutation here
@@ -105,25 +146,28 @@ const CompanyProfileForm: React.FC = () => {
                     <div className="space-y-6">
                         <div className="flex items-center space-x-1">
                             <label htmlFor="companyFounded" className="profile-form-label w-1/3">Company Founded:</label>
-                            <Controller
-                                name="companyFounded"
-                                control={control}
-                                defaultValue=""
-                                render={({ field: {onChange} }) => 
-                                    <DatePicker
-                                        selected={startDate}
-                                        onChange={date => {
-                                            setStartDate(date)
-                                            onChange(date)
-                                        }}
-                                        showYearPicker
-                                        dateFormat="yyyy"
-                                        placeholderText="Year"
-                                        className=""
-                                        customInput={<YearInput />}
-                                    />
-                                }
-                            />
+                            <div className="w-full">
+                                <Controller
+                                    name="companyFounded"
+                                    control={control}
+                                    defaultValue=""
+                                    render={({ field: {onChange} }) => 
+                                        <DatePicker
+                                            selected={yearFounded}
+                                            onChange={date => {
+                                                setYearFounded(date)
+                                                onChange(date)
+                                            }}
+                                            showYearPicker
+                                            dateFormat="yyyy"
+                                            placeholderText="Year"
+                                            className=""
+                                            customInput={<YearInput />}
+                                        />
+                                    }
+                                />
+
+                            </div>
                         </div>
                         <TextInputInline
                             register={register}
@@ -135,55 +179,16 @@ const CompanyProfileForm: React.FC = () => {
                             labelClassName="profile-form-label"
                             labelText="Company Website:"
                         />
-                        <div>
-                            <label htmlFor="sectors" className="profile-form-label">What sectors are your business in?</label>
-                            <p className="profile-form-label text-gray-7 pb-0">Choose up to 3 sectors</p>
-                            <Controller
-                                name="sectors"
-                                control={control}
-                                render={({ field }) => 
-                                    <AsyncSelect 
-                                        inputId="sectors"
-                                        aria-label="sectors"
-                                        {...field} 
-                                        className="w-full pt-2"
-                                        loadOptions={(e) => promiseOptions(sectorsOptions.filter(i =>
-                                            i.label.toLowerCase().includes(e.toLowerCase())
-                                        ))}
-                                        placeholder="Type in your sectors"
-                                        onChange={(value) => sectors.handleAddValue(value)}
-                                    />
-                                }
-                            />
-                            <p className="text-right text-xs text-gray-7">Press enter to add</p>
-                            <div className="my-2 space-x-1">
-                                {sectors.list.map(tool => {
-                                    return (
-                                        <div key={tool.label} className="bg-gray-2 border-2 border-gray-5 inline-block rounded py-1 px-2">
-                                            <p className="text-xs text-gray-10 flex items-center">
-                                                {tool.value} 
-                                                <CloseOutlined className="pl-1 text-gray-7 cursor-pointer" onClick={() => sectors.handleRemoveValue(tool.value)} />
-                                            </p>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                            <div className="my-4 ">
-                                <p className="pb-1 text-xs text-gray-7">Popular</p>
-                                <div className="space-x-2">
-                                    {sectorsOptions.map(tool => {
-                                        return (
-                                            <div key={tool.label} className=" border-2 border-dashed border-gray-5 inline-block rounded py-1 px-2 cursor-pointer" onClick={() => sectors.handleAddValue(tool)}>
-                                                <p className="text-xs text-gray-7 flex items-center">
-                                                    <PlusOutlined className="pr-1 text-gray-7"  />
-                                                    {tool.value} 
-                                                </p>
-                                            </div>
-                                        )
-                                    })}
-                                </div>
-                            </div>
-                        </div>
+                        <AsyncMultiSelectionInput 
+                            inputName="sectors"
+                            labelClassName="profile-form-label"
+                            labelText="What sectors are your business in?"
+                            control={control}
+                            optionsArray={dropdownOptions(data.allSectorsOptions)}
+                            listHook={sectors}
+                            subLabel="Choose up to 3 sectors"
+                            placeholder="Type in your sector..."
+                        />
                         <div className="">
                             <label htmlFor="stage" className="profile-form-label">What is the current stage of your company?</label>
                             <Controller
@@ -200,48 +205,268 @@ const CompanyProfileForm: React.FC = () => {
                                 }
                             />
                         </div>
-                        <div className="">
-                            <label className="profile-form-label">What business model category best matches your company?</label>
-                            {model.map(each => (
-                                <div key={each}>
-                                    <input name="businessModel" {...register('businessModel')} id={each} type="radio" value={each} className=""/>
-                                    <label htmlFor={each} className="profile-form-label pl-2">{each}</label>
-                                </div>
-                            ))}
-                        </div>
+                        <InputRadio 
+                            register={register}
+                            inputName="businessModel"
+                            groupLabelText="What business model category best matches your company?"
+                            labelClassName="profile-form-label"
+                            radioList={model}
+                        />
                     </div>
                 </FormContentPanel>
-
                 <FormContentPanel id="founding team" title="Founding Team" subtitle="Introduce your founding team">
-                    <div className="h-72"></div>
-                    <div className="h-72"></div>
+                    <div className="space-y-6">
+                        <div className="space-y-6">
+                            {fields.map((field, index) => {
+                                return (
+                                    <div key={field.id} className="space-y-6">
+                                        <TextInputInline
+                                            register={register}
+                                            errors={errors}
+                                            inputName={`foundingMember.${index}.name`}
+                                            placeholder="John"
+                                            type="name"
+                                            validation={{}}
+                                            labelClassName="profile-form-label"
+                                            labelText="Name:"
+                                            defaultValue={field.name}
+                                        />
+                                        <TextInputInline
+                                            register={register}
+                                            errors={errors}
+                                            inputName={`foundingMember.${index}.email`}
+                                            placeholder="John@email.com"
+                                            type="email"
+                                            validation={{}}
+                                            labelClassName="profile-form-label"
+                                            labelText="Email Address:"
+                                            defaultValue={field.email}
+                                        />
+                                        <TextInputInline
+                                            register={register}
+                                            errors={errors}
+                                            inputName={`foundingMember.${index}.title`}
+                                            placeholder="CEO"
+                                            type="text"
+                                            validation={{}}
+                                            labelClassName="profile-form-label"
+                                            labelText="Title / Role:"
+                                            defaultValue={field.title}
+                                        />
+                                        <TextInputInline
+                                            register={register}
+                                            errors={errors}
+                                            inputName={`foundingMember.${index}.linkedin`}
+                                            placeholder="https://www.linkedin.com/in/user/"
+                                            type="text"
+                                            validation={{}}
+                                            labelClassName="profile-form-label"
+                                            labelText="LinkedIn Profile:"
+                                            defaultValue={field.linkedin}
+                                        />
+                                        <div className="flex items-center space-x-1">
+                                            <div className="w-1/3">
+                                                {/* empty div for styling purposes */}
+                                            </div>
+                                            <div className="w-full">
+                                                <InputCheckbox 
+                                                    register={register}
+                                                    errors={errors}
+                                                    inputName={`foundingMember.${index}.isFounder`}
+                                                    validation={{}}
+                                                    labelClassName="profile-form-label pb-1 px-1 align-middle text-xs"
+                                                    labelText="This person is a founder"
+                                                    defaultChecked={field.isFounder}
+                                                />
+                                            </div>
+                                        </div>
+                                        {index === 0 ? 
+                                        <></> 
+                                        : 
+                                        <div className="flex justify-end">
+                                            <button className="border flex items-center text-red-400 text-xs border-red-400 px-1 rounded" onClick={() => remove(index)}><CloseOutlined /> Remove</button> 
+                                        </div>
+                                        }
+                                        {index === fields.length - 1 ? <></> : <hr className="my-6"/> }
+                                    </div>
+                                )
+                            })}
+                        </div>
+                        <div className="flex justify-end">
+                            <button className="border border-gray-5 border-dashed text-gray-7 py-2 px-4 text-sm" type="button" onClick={() => handleAddTeamMember()}>+ Add another team member</button>
+                        </div>
+                        <hr className="my-6"/> 
+                        <TextInput
+                            register={register}
+                            errors={errors}
+                            inputName="companyLocation"
+                            placeholder="Type your locations here"
+                            type="name"
+                            validation={{}}
+                            labelClassName="profile-form-label"
+                            labelText="Where is your company physically headquartered?"
+                        />
+                        <TextInput
+                            register={register}
+                            errors={errors}
+                            inputName="incorporatedLocation"
+                            placeholder="Type location here"
+                            type="name"
+                            validation={{}}
+                            labelClassName="profile-form-label"
+                            labelText="Where is your company incorporated?"
+                        />
+                    </div>
                 </FormContentPanel>
-
                 <FormContentPanel id="the business" title="The Business" subtitle="What does your company do?">
-                    <div className="h-72"></div>
-                    <div className="h-72"></div>
+                    <div className="space-y-6">
+                        <TextInput
+                            register={register}
+                            errors={errors}
+                            inputName="describeCompany"
+                            placeholder="500 Startups is a seed fund & a network of startup programs."
+                            type="name"
+                            validation={{}}
+                            labelClassName="profile-form-label"
+                            labelText="Describe what your company does in no more than 3 sentences. Give us your best elevator pitch:"
+                        />
+                        <TextArea 
+                            id="describeBusinessModel"
+                            register={register}
+                            errors={errors}
+                            inputName="describeBusinessModel"
+                            placeholder=""
+                            validation={{
+                            }}
+                            labelClassName="profile-form-label"
+                            labelText="Describe your business model. How does (or will) your company make money, even if it is not making any today?"
+                            maxLength="150"
+                            wordcount="150 words or fewer"
+                        />
+                        <TextArea 
+                            id="marketChannel"
+                            register={register}
+                            errors={errors}
+                            inputName="marketChannel"
+                            placeholder=""
+                            validation={{
+                            }}
+                            labelClassName="profile-form-label"
+                            labelText="What are your go-to-market channels right now? Tell us how they have been fueling your customer or revenue growth."
+                            maxLength="150"
+                            wordcount="150 words or fewer"
+                        />
+                        <TextArea 
+                            id="useCase"
+                            register={register}
+                            errors={errors}
+                            inputName="useCase"
+                            placeholder=""
+                            validation={{
+                            }}
+                            labelClassName="profile-form-label"
+                            labelText="What problem or use case does your company address, and how do your potential target customers get by today in the absence of your product/service?"
+                            maxLength="150"
+                            wordcount="150 words or fewer"
+                        />
+                        <TextArea 
+                            id="whyRightTiming"
+                            register={register}
+                            errors={errors}
+                            inputName="whyRightTiming"
+                            placeholder=""
+                            validation={{
+                            }}
+                            labelClassName="profile-form-label"
+                            labelText="Why is now the right timing for your company?"
+                            maxLength="150"
+                            wordcount="150 words or fewer"
+                        />
+                    </div>
                 </FormContentPanel>
-
                 <FormContentPanel id="fundraising" title="Fundraising" subtitle="Let us know your fundraising history and goals.">
-                    <div className="h-72"></div>
-                    <div className="h-72"></div>
+                    <div className="space-y-6">
+                        <InputRadio 
+                            register={register}
+                            inputName="outsideFunding"
+                            groupLabelText="Have you already raised any outside funding?"
+                            labelClassName="profile-form-label"
+                            radioList={["yes", "no"]}
+                        />
+                        <TextInputInline
+                            register={register}
+                            errors={errors}
+                            inputName="fundraisingTarget"
+                            placeholder="$"
+                            type="text"
+                            validation={{
+                                pattern: {
+                                    value: /^[-+]?[0-9]+(?:,[0-9]{3})*(?:\.[0-9]+)?$/,
+                                    message: "Entered value is invalid. (Example: 100,000)"
+                                }
+                            }}
+                            labelClassName="profile-form-label"
+                            labelText="Fundraising Target:"
+                        />
+                        
+                    </div>
                 </FormContentPanel>
-
                 <FormContentPanel id="supplementary files" title="Supplementary Files" subtitle="This is an optional section. Include an attachment or link only if you think it would be beneficial to help others understand what your company offers. You can add a team video, pitch deck, product demonstration video, etc.">
-                    <div className="h-72"></div>
-                    <div className="h-72"></div>
+                    <div className="space-y-6">
+                        <TextInputInline
+                            register={register}
+                            errors={errors}
+                            inputName="optionalLink"
+                            placeholder="https://"
+                            type="text"
+                            validation={{
+                            }}
+                            labelClassName="profile-form-label"
+                            labelText="Add a link:"
+                        />
+                    </div>
                 </FormContentPanel>
             </div>
-            <div className="edit-profile-side">
-                <div className="p-6 sticky top-20">
-                    <ProfileCompletion completionPercentage={0} />
-                    <ProfileSectionNav sections={['introduction', 'founding team', 'the business', 'fundraising', 'supplementary files']} />
-                    <PrimaryButton type="submit">Save Profile</PrimaryButton>
-                </div>
-            </div>
+            <ProfileFormSidePanel 
+                completionPercentage={0}
+                sections={['introduction', 'founding team', 'the business', 'fundraising', 'supplementary files']} 
+            />
         </form>
     )
 }
 
 export default CompanyProfileForm
 
+
+
+
+
+
+
+// custom fundraisingTarget input with dollar sign icon intact inside
+{/* <div className="flex items-center space-x-1">
+                            <label htmlFor="fundraisingTarget" className={`profile-form-label w-1/3`}>Fundraising Target</label>
+                            <div className="flex relative w-2/3">
+                                <p className="absolute left-2 transform -translate-y-0.5 py-2 text-gray-5 cursor-pointer">$</p> 
+                                <div className="w-full">
+                                    <input
+                                        id="fundraisingTarget"
+                                        aria-invalid={errors.fundraisingTarget ? "true" : "false"}
+                                        {...register("fundraisingTarget", {
+                                            
+                                            pattern: {
+                                                value: /^[-+]?[0-9]+(?:,[0-9]{3})*(?:\.[0-9]+)?$/,
+                                                message: "Value entered is invalid"
+                                            }
+                                        })}
+                                        className="border border-gray-5 block pl-5 py-2 px-2 w-full rounded text-sm"
+                                        aria-placeholder=""
+                                        placeholder=""
+                                        type="text"
+                                    />
+                                    {errors.fundraisingTarget && (
+                                        <span role="alert" className="absolute text-xs text-red-500">{errors.fundraisingTarget.message}</span>
+                                    )}
+                                </div>
+                            </div>
+                        </div> */}

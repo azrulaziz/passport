@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 
 const useCompletionStatus = (allField) => {
     const [completionPercentage, setCompletionPercentage] = useState(0)
@@ -16,6 +16,10 @@ const useCompletionStatus = (allField) => {
         let percentage = Math.round((numberOfInputFilled / numberOfInput) * 100)
         setCompletionPercentage(percentage)
     }
+
+    useEffect(() => {
+        checkCompletionStatus()
+    }, [allField])
 
     return {
         completionPercentage,

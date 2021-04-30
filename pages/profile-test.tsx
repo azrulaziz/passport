@@ -1,7 +1,7 @@
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
 import Layout from "components/common/Layout"
-import SignIn from 'components/user/SignIn'
+import SignIn from 'components/access/SignIn'
 import { useTranslation } from 'next-i18next'
 
 export default function Profile() {

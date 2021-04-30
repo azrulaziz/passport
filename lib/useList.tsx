@@ -1,10 +1,15 @@
 import {useState} from 'react'
 
-function useList(defaultList) {
+function useList(defaultList, limit = null) {
     const [list, setList] = useState(defaultList);
 
     function handleAddValue(val) {
-        if (list.some(each => each.value === val.value)) {
+        if (limit && list.length === limit) {
+            return null
+        }
+        if (typeof val !== 'string' && list.some(each => each.value === val.value)) {
+            return null
+        } else if (typeof val === 'string' && list.some(each => each === val)) {
             return null
         } else {
             setList([...list, val])
@@ -12,8 +17,13 @@ function useList(defaultList) {
     }
 
     const handleRemoveValue = (val) => {
+        console.log(typeof val)
         const updatedList = list.filter(each => {
-            return each.value !== val
+            if (typeof val === 'object') {
+                return each.value !== val.value
+            } else if (typeof val === 'string') {
+                return each !== val
+            }
         })
         setList(updatedList)
     }

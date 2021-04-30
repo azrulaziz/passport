@@ -5,15 +5,25 @@ import { useForm, SubmitHandler, Controller} from "react-hook-form";
 import {UploadOutlined} from '@ant-design/icons'
 import Select from "react-select";
 import Dropzone from './PhotoUpload'
+import {useMutation, useQueryClient} from "react-query";
+import { request, gql } from "graphql-request";
+import {useRouter} from 'next/router'
+
+interface Props {
+    data: {
+        User: FormValues
+    }
+}
 
 interface FormValues {
+    id: number,
     firstName: string,
     lastName: string,
     suffix?: string,
     preferredName?: string,
     gender?: string
-    headline?: boolean
-    linkedinUrl?: boolean,
+    headline?: string
+    linkedinUrl?: string,
     photo?: string
 }
 
@@ -23,13 +33,54 @@ const genderList = [
     { value: "non-binary", label: "Non binary" }
 ]
 
-const PersonalInfoForm: React.FC = () => {
+const UPDATE_PERSONAL_INFO = gql`
+  mutation UPDATE_PERSONAL_INFO($id: ID!, $firstName: String!, $lastName: String!, $headline: String!, $linkedinUrl: String!)  {
+    updateUser(id: $id, firstName: $firstName, lastName: $lastName, headline: $headline, linkedinUrl: $linkedinUrl) {
+        id
+        firstName
+        lastName
+        linkedinUrl
+        headline
+        preferredName
+    }
+  }
+`;
 
-    const { register, control, handleSubmit, formState: { errors }, watch } = useForm<FormValues>();
+const PersonalInfoForm: React.FC<Props> = ({data: {User}}) => {
+    const router = useRouter()
+    const { register, control, handleSubmit, formState: { errors }, watch } = useForm<FormValues>({
+        defaultValues: {
+            firstName: User.firstName,
+            lastName: User.lastName,
+            suffix: User.suffix,
+            preferredName: User.preferredName,
+            gender: User.gender,
+            headline: User.headline,
+            linkedinUrl: User.linkedinUrl
+        }
+    });
+
     const [uploadedPhoto, setUploadedPhoto] = useState(null)
 
-    const handleSubmitPersonalInfo: SubmitHandler<FormValues> = (data: FormValues) => {
-        console.log(data)
+    const queryClient = useQueryClient()
+    const {mutate} = useMutation((values: FormValues) =>
+        request("http://localhost:4000/graphql/", UPDATE_PERSONAL_INFO, values), {
+            onError: (error) => {
+                console.log(error)
+            },
+            onSuccess: (data) => {
+                console.log(data)
+                queryClient.invalidateQueries('personalInfoForm')
+                queryClient.invalidateQueries('profile')
+                router.push('/profile')
+            }
+        }
+    );
+    
+    const handleSubmitPersonalInfo: SubmitHandler<FormValues> = (formData) => {
+        console.log(formData)
+        formData.id = 1
+        mutate(formData)
     }
 
     const handleSetUploadedPhoto = (e) => {
@@ -89,7 +140,7 @@ const PersonalInfoForm: React.FC = () => {
                                         required: "Please input your first name"
                                     }}
                                     labelClassName=""
-                                    labelText={<p className="profile-form-label ">First Name / Given Name <span className="text-red-600">*</span></p>}
+                                    labelText={<span className="profile-form-label ">First Name / Given Name <span className="text-red-600">*</span></span>}
                                 />
                             </div>
                             <div className="w-1/2 relative">
@@ -103,7 +154,7 @@ const PersonalInfoForm: React.FC = () => {
                                         required: "Please input your last name"
                                     }}
                                     labelClassName=""
-                                    labelText={<p className="profile-form-label ">Last / Family / Surname <span className="text-red-600">*</span></p>}
+                                    labelText={<span className="profile-form-label ">Last / Family / Surname <span className="text-red-600">*</span></span>}
                                 />
                         </div>
                     </div>
@@ -119,8 +170,8 @@ const PersonalInfoForm: React.FC = () => {
                                     validation={{
                                         
                                     }}
-                                    labelClassName=""
-                                    labelText={<p className="profile-form-label">Suffix</p>}
+                                    labelClassName="profile-form-label"
+                                    labelText="Suffix"
                                 />
                             </div>
                             <div className="w-1/2 relative">
@@ -133,8 +184,8 @@ const PersonalInfoForm: React.FC = () => {
                                     validation={{
                                         
                                     }}
-                                    labelClassName=""
-                                    labelText={<p className="profile-form-label">Preferred Name (Nickname)</p>}
+                                    labelClassName="profile-form-label"
+                                    labelText="Preferred Name (Nickname)"
                                 />
                         </div>
                     </div>
@@ -171,8 +222,8 @@ const PersonalInfoForm: React.FC = () => {
                                     validation={{
                                         
                                     }}
-                                    labelClassName=""
-                                    labelText={<p className="profile-form-label">Add a headline to your profile</p>}
+                                    labelClassName="profile-form-label"
+                                    labelText="Add a headline to your profile"
                                 />
                             </div>
                     </div>
@@ -182,14 +233,14 @@ const PersonalInfoForm: React.FC = () => {
                                 <TextInput
                                     register={register}
                                     errors={errors}
-                                    inputName="linkedin"
+                                    inputName="linkedinUrl"
                                     placeholder={"LinkedIn Profile"}
                                     type="name"
                                     validation={{
                                         
                                     }}
-                                    labelClassName=""
-                                    labelText={<p className="profile-form-label">LinkedIn Profile</p>}
+                                    labelClassName="profile-form-label"
+                                    labelText="LinkedIn Profile"
                                 />
                             </div>
                     </div>

@@ -2,23 +2,24 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
 import Layout from "components/common/Layout"
 import { useTranslation } from 'next-i18next'
-import UserProfileForm from 'components/profile/UserProfileForm'
+import MentorProfileForm from 'components/profile/MentorProfileForm'
 import {useQuery} from "react-query";
 import { request, gql } from "graphql-request";
 import ErrorLayout from 'components/common/ErrorLayout'
 import LoadingLayout from 'components/common/LoadingLayout'
 import {useHeaderTitle} from 'store/useHeaderTitle'
 
-const GET_USER_PROFILE = gql`
+const GET_MENTOR_PROFILE = gql`
   query  {
     User (id: 1) {
       id
-      UserProfiles {
+      MentorProfiles {
         id
         summary
-        skills
-        tools
-        interest
+        region
+        remote
+        familiarSector
+        mentoringSector
         user_id
       }
     }
@@ -26,17 +27,17 @@ const GET_USER_PROFILE = gql`
 `;
 
 
-export default function EditUserProfile() {
+export default function EditMentorProfile() {
   const { t } = useTranslation('profile')
   const setHeaderTitle = useHeaderTitle(state => state.setTitle)
-  setHeaderTitle(`Edit User Profile`)
+  setHeaderTitle(`Edit Mentor Profile`)
 
-  const fetchUserProfile = async () => {
-    const data = await request("http://localhost:4000/graphql/", GET_USER_PROFILE);
+  const fetchMentorProfile = async () => {
+    const data = await request("http://localhost:4000/graphql/", GET_MENTOR_PROFILE);
     return data;
   }
 
-  const { data, status } = useQuery('userProfile', fetchUserProfile);
+  const { data, status } = useQuery('profile', fetchMentorProfile);
 
   if (status === 'loading') {
     return (
@@ -55,7 +56,7 @@ export default function EditUserProfile() {
       <Head>
         <title>{t('head-title')}</title>
       </Head>
-      <UserProfileForm profileData={data?.User?.UserProfiles} />
+      <MentorProfileForm profileData={data?.User?.MentorProfiles}  />
     </Layout>
   )
 }

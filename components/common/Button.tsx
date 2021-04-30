@@ -9,7 +9,7 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 export const PrimaryButton: React.FC<Props> = ({children, extraStyle, ...props}) => {
     return (
-        <button className={`bg-primary-blue text-white text-xs sm:text-sm px-4 py-2 rounded my-1 ${extraStyle}`} {...props}>
+        <button className={`bg-primary-blue border-primary-blue border text-white text-xs sm:text-sm px-4 py-2 rounded my-1 ${extraStyle}`} {...props}>
             {children}
         </button>
     )

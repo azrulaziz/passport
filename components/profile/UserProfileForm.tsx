@@ -1,13 +1,15 @@
-import { PrimaryButton } from 'components/common/Button'
-import React, {useEffect} from 'react'
+import React from 'react'
 import FormContentPanel from './FormContentPanel'
-import { useForm, Controller} from "react-hook-form";
-import AsyncSelect from 'react-select/async';
-import {CloseOutlined, PlusOutlined} from '@ant-design/icons'
-import ProfileSectionNav from './ProfileSectionNav'
-import ProfileCompletion from './ProfileCompletion';
+import {useForm} from "react-hook-form";
 import useList from 'lib/useList'
 import useCompletionStatus from 'lib/useCompletionStatus'
+import { TextArea, AsyncMultiSelectionInput } from 'components/common/Input';
+import ProfileFormSidePanel from './ProfileFormSidePanel';
+import {useMutation, useQueryClient} from "react-query";
+import { request, gql } from "graphql-request";
+import {useRouter} from 'next/router'
+import { v4 as uuidv4 } from 'uuid';
+import {buildArrayValueForReactSelect, getArrayOfValueFromReactSelect} from 'lib/utils'
 
 type SelectObj = {
     value: string
@@ -20,6 +22,147 @@ interface FormValues {
     tools?: string[],
     interest?: string[]
 }
+
+const UserProfileForm = ({profileData}) => {
+    
+    const router = useRouter()
+    const { register, control, handleSubmit, formState: { errors }, watch } = useForm<FormValues>({
+        defaultValues: {
+            summary: profileData[0]?.summary ? profileData[0].summary : "",
+            skills: [],
+            tools: [],
+            interest: []
+        }
+    });
+    const watchAllFields = watch();
+
+    const skills = useList(profileData[0]?.skills?.length > 0 ? buildArrayValueForReactSelect(profileData[0].skills) : [])
+    const tools = useList(profileData[0]?.tools?.length > 0 ? buildArrayValueForReactSelect(profileData[0].tools) : [])
+    const interest = useList(profileData[0]?.interest?.length > 0 ? buildArrayValueForReactSelect(profileData[0].interest) : [])
+
+    const userProfile = useCompletionStatus({
+        summary: watchAllFields.summary,
+        skills: skills.list.length,
+        tools: tools.list.length,
+        interest: interest.list.length
+    })
+
+    const queryClient = useQueryClient()
+    const {mutate: updateProfile} = useMutation((values: FormValues) =>
+        request("http://localhost:4000/graphql/", UPDATE_USER_PROFILE, values), {
+            onError: (error) => {
+                console.log(error)
+            },
+            onSuccess: (data) => {
+                console.log(data)
+                queryClient.invalidateQueries('profile')
+                queryClient.invalidateQueries('userProfile')
+                router.push('/profile')
+            }
+        }
+    );
+
+    const {mutate: createProfile} = useMutation((values: FormValues) =>
+        request("http://localhost:4000/graphql/", CREATE_USER_PROFILE, values), {
+            onError: (error) => {
+                console.log(error)
+            },
+            onSuccess: (data) => {
+                console.log(data)
+                queryClient.invalidateQueries('profile')
+                queryClient.invalidateQueries('userProfile')
+                router.push('/profile')
+            }
+        }
+    );
+
+    const handleUpdateUserProfile = (data: FormValues) => {
+        if (profileData.length < 1) {
+            const createUserProfileData = {
+                id: uuidv4(),
+                summary: data.summary,
+                skills: getArrayOfValueFromReactSelect(skills.list),
+                tools: getArrayOfValueFromReactSelect(tools.list),
+                interest: getArrayOfValueFromReactSelect(interest.list),
+                user_id: 1
+            }
+            createProfile(createUserProfileData)
+        } else {
+            const updateUserProfileData = {
+                id: profileData[0].id,
+                summary: data.summary,
+                skills: getArrayOfValueFromReactSelect(skills.list),
+                tools: getArrayOfValueFromReactSelect(tools.list),
+                interest: getArrayOfValueFromReactSelect(interest.list),
+                user_id: 1
+            }
+            updateProfile(updateUserProfileData)
+        }
+    }
+
+    return (
+        <form className="edit-profile-form" onSubmit={handleSubmit(handleUpdateUserProfile)}>
+            <div className="edit-profile-main ">
+                <FormContentPanel id="summary" title="Summary" subtitle="Start by introducing yourself.">
+                    <TextArea 
+                        id="summaryInput"
+                        register={register}
+                        errors={errors}
+                        inputName="summary"
+                        placeholder="Write your summary here..."
+                        validation={{}}
+                        labelClassName="profile-form-label"
+                        labelText="Write a short summary about yourself. This can include your goals and aspirations, your past achievments, or what you’ve been working on."
+                    />
+                </FormContentPanel>
+                <FormContentPanel id="skills" title="Skills" subtitle="Let others know what you’re good at.">
+                    <AsyncMultiSelectionInput 
+                        id="skillsInput"
+                        inputName="skills"
+                        labelClassName="profile-form-label"
+                        labelText="Choose the industry knowledge skills that apply to you."
+                        control={control}
+                        optionsArray={skillsOptions}
+                        listHook={skills}
+                        subLabel=""
+                        placeholder="Type in some skills"
+                    />
+                    <hr className="my-8"/>
+                    <AsyncMultiSelectionInput 
+                        inputName="tools"
+                        labelClassName="profile-form-label"
+                        labelText="Add to the list with some relevant tools and technologies you are proficient in."
+                        control={control}
+                        optionsArray={toolsOptions}
+                        listHook={tools}
+                        subLabel=""
+                        placeholder="Type in some tools"
+                    />
+                    
+                </FormContentPanel>
+                <FormContentPanel id="interest" title="Interest" subtitle="Let others know what you’re interested in.">
+                    <AsyncMultiSelectionInput 
+                        id="interestInput"
+                        inputName="interest"
+                        labelClassName="profile-form-label"
+                        labelText="Add to the list with topics that interest you."
+                        control={control}
+                        optionsArray={interestOptions}
+                        listHook={interest}
+                        subLabel=""
+                        placeholder="Type in your topic..."
+                    />
+                </FormContentPanel>
+            </div>
+            <ProfileFormSidePanel 
+                completionPercentage={userProfile.completionPercentage}
+                sections={["summary", "skills", "interest"]}
+            />
+        </form>
+    )
+}
+
+export default UserProfileForm
 
 const skillsOptions = [
     {value: "Marketing", label: "Marketing"},
@@ -36,226 +179,29 @@ const interestOptions = [
     {value: "Topic2", label: "Topic2"},
     {value: "Topic3", label: "Topic3"},
 ]
-const existingSkills = [
-    {value: "Programming", label: "Programming"},
-]
-const existingTools = []
 
-const UserProfileForm: React.FC = () => {
-    const { register, control, handleSubmit, formState: { errors }, watch } = useForm<FormValues>({
-        defaultValues: {
-            summary: "",
-            skills: [],
-            tools: [],
-            interest: []
-        }
-    });
-    const watchAllFields = watch();
-
-    const skills = useList(existingSkills)
-    const tools = useList(existingTools)
-    const interest = useList([])
-    
-    const userProfile = useCompletionStatus({
-        summary: watchAllFields.summary,
-        skills: skills.list.length,
-        tools: tools.list.length,
-        interest: interest.list.length
-    })
-    
-    useEffect(() => {
-        userProfile.checkCompletionStatus()
-    })
-    
-    const promiseOptions = (fn) =>
-        new Promise(resolve => {
-            setTimeout(() => {
-            resolve(fn);
-        }, 1000);
-    });
-
-    const handleUpdateUserProfile = (data: FormValues) => {
-        // data mutation here
-        console.log(data)
+const CREATE_USER_PROFILE = gql`
+  mutation CREATE_USER_PROFILE($id: ID!, $summary: String!, $skills: [String]!, $tools: [String]!, $interest: [String]!, $user_id: ID!)  {
+    createUserProfile (id: $id, summary: $summary, skills: $skills, tools: $tools, interest: $interest, user_id: $user_id) {
+        id,
+        summary,
+        skills,
+        tools,
+        interest,
+        user_id
     }
+  }
+`;
 
-    return (
-        <form className="edit-profile-form" onSubmit={handleSubmit(handleUpdateUserProfile)}>
-            <div className="edit-profile-main">
-                <FormContentPanel id="summary" title="Summary" subtitle="Start by introducing yourself.">
-                    <>
-                        <label htmlFor="summaryInput" className="profile-form-label">Write a short summary about yourself. This can include your goals and aspirations, your past achievments, or what you’ve been working on.</label>
-                        <textarea
-                            id="summaryInput"
-                            aria-label="summary"
-                            {...register("summary")}
-                            className="mt-2 border border-gray-5 block py-2 h-16 px-2 w-full rounded text-sm"
-                            aria-placeholder="Write your summary here..."
-                            placeholder="Write your summary here..."
-                            defaultValue="dsdsdsd"
-                        >
-                        </textarea>
-                    </>
-                </FormContentPanel>
-                <FormContentPanel id="skills" title="Skills" subtitle="Let others know what you’re good at.">
-                    <>
-                        <label htmlFor="skillsInput" className="profile-form-label">Choose the industry knowledge skills that apply to you.</label>
-                        <Controller
-                            name="skills"
-                            control={control}
-                            render={({ field }) => 
-                                <AsyncSelect 
-                                    inputId="skillsInput"
-                                    aria-label="skills"
-                                    {...field} 
-                                    className="w-full pt-2"
-                                    loadOptions={(e) => promiseOptions(skillsOptions.filter(i =>
-                                        i.label.toLowerCase().includes(e.toLowerCase())
-                                    ))}
-                                    placeholder="Type in some skills"
-                                    onChange={(value) => skills.handleAddValue(value)}
-                                />
-                            }
-                        />
-                        <p className="text-right text-xs text-gray-7">Press enter to add</p>
-                        <div className="my-2 space-x-1">
-                            {skills.list.map(skill => {
-                                return (
-                                    <div key={skill.label} className="bg-gray-2 border-2 border-gray-5 inline-block rounded py-1 px-2">
-                                        <p className="text-xs text-gray-10 flex items-center">
-                                            {skill.value} 
-                                            <CloseOutlined className="pl-1 text-gray-7 cursor-pointer" onClick={() => skills.handleRemoveValue(skill.value)} />
-                                        </p>
-                                    </div>
-                                )
-                            })}
-                        </div>
-                        <div className="my-4 ">
-                            <p className="pb-1 text-xs text-gray-7">Popular</p>
-                            <div className="space-x-2">
-                                {skillsOptions.map(skill => {
-                                    return (
-                                        <div key={skill.label} className=" border-2 border-dashed border-gray-5 inline-block rounded py-1 px-2 cursor-pointer"  onClick={() => skills.handleAddValue(skill)}>
-                                            <p className="text-xs text-gray-7 flex items-center">
-                                                <PlusOutlined className="pr-1 text-gray-7" />
-                                                {skill.value} 
-                                            </p>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                        </div>
-                    </>
-                    <hr className="my-8"/>
-                    <>
-                        <label htmlFor="tools" className="profile-form-label">Add to the list with some relevant tools and technologies you are proficient in.</label>
-                        <Controller
-                            name="tools"
-                            control={control}
-                            render={({ field }) => 
-                                <AsyncSelect 
-                                    inputId="tools"
-                                    aria-label="tools"
-                                    {...field} 
-                                    className="w-full pt-2"
-                                    loadOptions={(e) => promiseOptions(toolsOptions.filter(i =>
-                                        i.label.toLowerCase().includes(e.toLowerCase())
-                                    ))}
-                                    placeholder="Type in some tools & technologies..."
-                                    onChange={(value) => tools.handleAddValue(value)}
-                                />
-                            }
-                        />
-                        <p className="text-right text-xs text-gray-7">Press enter to add</p>
-                        <div className="my-2 space-x-1">
-                            {tools.list.map(tool => {
-                                return (
-                                    <div key={tool.label} className="bg-gray-2 border-2 border-gray-5 inline-block rounded py-1 px-2">
-                                        <p className="text-xs text-gray-10 flex items-center">
-                                            {tool.value} 
-                                            <CloseOutlined className="pl-1 text-gray-7 cursor-pointer" onClick={() => tools.handleRemoveValue(tool.value)} />
-                                        </p>
-                                    </div>
-                                )
-                            })}
-                        </div>
-                        <div className="my-4 ">
-                            <p className="pb-1 text-xs text-gray-7">Popular</p>
-                            <div className="space-x-2">
-                                {toolsOptions.map(tool => {
-                                    return (
-                                        <div key={tool.label} className=" border-2 border-dashed border-gray-5 inline-block rounded py-1 px-2 cursor-pointer" onClick={() => tools.handleAddValue(tool)}>
-                                            <p className="text-xs text-gray-7 flex items-center">
-                                                <PlusOutlined className="pr-1 text-gray-7"  />
-                                                {tool.value} 
-                                            </p>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                        </div>
-                    </>
-                </FormContentPanel>
-                <FormContentPanel id="interest" title="Interest" subtitle="Let others know what you’re interested in.">
-                    <>
-                        <label htmlFor="interestInput" className="profile-form-label">Add to the list with topics that interest you.</label>
-                        <Controller
-                            name="interest"
-                            control={control}
-                            render={({ field }) => 
-                                <AsyncSelect 
-                                    inputId="interestInput"
-                                    aria-label="interest"
-                                    {...field} 
-                                    className="w-full pt-2"
-                                    loadOptions={(e) => promiseOptions(interestOptions.filter(i =>
-                                        i.label.toLowerCase().includes(e.toLowerCase())
-                                    ))}
-                                    placeholder="Type in your topic..."
-                                    onChange={(value) => interest.handleAddValue(value)}
-                                />
-                            }
-                        />
-                        <p className="text-right text-xs text-gray-7">Press enter to add</p>
-                        <div className="my-2 space-x-2">
-                            {interest.list.map(topic => {
-                                return (
-                                    <div key={topic.label} className="bg-gray-2 border-2 border-gray-5 inline-block rounded py-1 px-2">
-                                        <p className="text-xs text-gray-10 flex items-center">
-                                            {topic.value} 
-                                            <CloseOutlined className="pl-1 text-gray-7 cursor-pointer" onClick={() => interest.handleRemoveValue(topic.value)} />
-                                        </p>
-                                    </div>
-                                )
-                            })}
-                        </div>
-                        <div className="my-4 ">
-                            <p className="pb-1 text-xs text-gray-7">Popular</p>
-                            <div className="space-x-2">
-                                {interestOptions.map(topic => {
-                                    return (
-                                        <div key={topic.label} className=" border-2 border-dashed border-gray-5 inline-block rounded py-1 px-2 cursor-pointer" onClick={() => interest.handleAddValue(topic)}>
-                                            <p className="text-xs text-gray-7 flex items-center">
-                                                <PlusOutlined className="pr-1 text-gray-7"  />
-                                                {topic.value} 
-                                            </p>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                        </div>
-                    </>
-                </FormContentPanel>
-            </div>
-            <div className="edit-profile-side">
-                <div className="p-6 sticky top-20">
-                    <ProfileCompletion completionPercentage={userProfile.completionPercentage} />
-                    <ProfileSectionNav sections={["summary", "skills", "interest"]} />
-                    <PrimaryButton type="submit">Save Profile</PrimaryButton>
-                </div>
-            </div>
-        </form>
-    )
-}
-
-export default UserProfileForm
+const UPDATE_USER_PROFILE = gql`
+  mutation UPDATE_USER_PROFILE($id: ID!, $summary: String!, $skills: [String]!, $tools: [String]!, $interest: [String]!, $user_id: ID!)  {
+    updateUserProfile (id: $id, summary: $summary, skills: $skills, tools: $tools, interest: $interest, user_id: $user_id) {
+        id,
+        summary,
+        skills,
+        tools,
+        interest,
+        user_id
+    }
+  }
+`;

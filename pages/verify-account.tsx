@@ -1,7 +1,7 @@
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
-import AccessLayout from "components/user/AccessLayout"
-import VerifyCode from "components/user/VerifyCode"
+import AccessLayout from "components/access/AccessLayout"
+import VerifyCode from "components/access/VerifyCode"
 import { useTranslation } from 'next-i18next'
 
 export default function VerifyAccount() {

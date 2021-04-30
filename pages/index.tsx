@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import AccessLayout from "components/user/AccessLayout"
+import AccessLayout from "components/access/AccessLayout"
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 

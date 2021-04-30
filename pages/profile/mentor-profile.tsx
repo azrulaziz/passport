@@ -5,13 +5,13 @@ import { useTranslation } from 'next-i18next'
 import ProfileLayout from 'components/profile/ProfileLayout'
 import PersonalInfoPanel from 'components/profile/PersonalInfoPanel'
 import AddProfilePanel from 'components/profile/AddProfilePanel'
-import {useQuery} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import { request, gql } from "graphql-request";
-import UserProfile from 'components/profile/UserProfile'
+import MentorProfile from 'components/profile/MentorProfile'
 import ErrorLayout from 'components/common/ErrorLayout'
 import LoadingLayout from 'components/common/LoadingLayout'
 import {useHeaderTitle} from 'store/useHeaderTitle'
-import {useEffect} from 'react'
+import { useEffect } from 'react'
 
 const GET_PROFILE_DATA = gql`
   query  {
@@ -38,6 +38,7 @@ const GET_PROFILE_DATA = gql`
       MentorProfiles {
         summary
         region
+        languages
         remote
         familiarSector
         mentoringSector
@@ -50,18 +51,18 @@ const GET_PROFILE_DATA = gql`
 `;
 
 
-export default function Profile() {
+export default function MentorProfilePage() {
   const { t } = useTranslation('profile')
   const setHeaderTitle = useHeaderTitle(state => state.setTitle)
   
 
-  
   const fetchProfile = async () => {
     const data = await request("http://localhost:4000/graphql/", GET_PROFILE_DATA);
     return data;
   }
+
   const { data, status } = useQuery('profile', fetchProfile);
-  
+
   useEffect(() => {
     setHeaderTitle(`Profile: ${data?.User?.firstName} ${data?.User?.lastName}`)
   }, [data])
@@ -77,7 +78,6 @@ export default function Profile() {
       <ErrorLayout />
     )
   }
-  
 
   return (
     <Layout>
@@ -86,7 +86,7 @@ export default function Profile() {
       </Head>
       <ProfileLayout 
         personalInfo={<PersonalInfoPanel data={data} />}
-        main={<UserProfile profile={data?.User?.UserProfiles} />} 
+        main={<MentorProfile profile={data?.User?.MentorProfiles} />} 
         side={
         <div className="lg:mt-10">
           <AddProfilePanel data={data} />

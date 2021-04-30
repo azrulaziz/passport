@@ -3,5 +3,9 @@ module.exports = {
     future: {
         webpack5: true,
     },
-    i18n
+    i18n,
+    env: {
+        env: process.env.NODE_ENV,
+        enpoint: process.env.ENDPOINT
+    }
 }
