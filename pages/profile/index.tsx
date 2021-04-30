@@ -62,7 +62,6 @@ export default function Profile() {
     return data;
   }
   const { data, status } = useQuery('profile', fetchProfile);
-  console.log(endpoint)
   
   useEffect(() => {
     setHeaderTitle(`Profile: ${data?.User?.firstName ? data?.User?.firstName : ""} ${data?.User?.lastName ? data?.User?.lastName : ""}`)

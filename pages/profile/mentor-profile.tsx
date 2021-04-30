@@ -12,6 +12,7 @@ import ErrorLayout from 'components/common/ErrorLayout'
 import LoadingLayout from 'components/common/LoadingLayout'
 import {useHeaderTitle} from 'store/useHeaderTitle'
 import { useEffect } from 'react'
+import {endpoint} from 'config'
 
 const GET_PROFILE_DATA = gql`
   query  {
@@ -57,7 +58,7 @@ export default function MentorProfilePage() {
   
 
   const fetchProfile = async () => {
-    const data = await request("http://localhost:4000/graphql/", GET_PROFILE_DATA);
+    const data = await request(endpoint, GET_PROFILE_DATA);
     return data;
   }
 
