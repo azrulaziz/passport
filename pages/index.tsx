@@ -8,7 +8,7 @@ export default function Home() {
   const user = null
 
   useEffect(() => {
-    if (!user) router.push('/signin')
+    if (!user) router.push('/profile')
 
   }, [])
 

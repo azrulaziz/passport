@@ -5,7 +5,6 @@ module.exports = {
     },
     i18n,
     env: {
-        env: process.env.NODE_ENV,
-        enpoint: process.env.ENDPOINT
+        enpoint: process.env.NEXT_PUBLIC_ENDPOINT
     }
 }

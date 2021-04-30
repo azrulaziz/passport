@@ -12,6 +12,7 @@ import ErrorLayout from 'components/common/ErrorLayout'
 import LoadingLayout from 'components/common/LoadingLayout'
 import {useHeaderTitle} from 'store/useHeaderTitle'
 import {useEffect} from 'react'
+import {endpoint} from 'config'
 
 const GET_PROFILE_DATA = gql`
   query  {
@@ -57,13 +58,14 @@ export default function Profile() {
 
   
   const fetchProfile = async () => {
-    const data = await request("http://localhost:4000/graphql/", GET_PROFILE_DATA);
+    const data = await request(endpoint, GET_PROFILE_DATA);
     return data;
   }
   const { data, status } = useQuery('profile', fetchProfile);
+  console.log(endpoint)
   
   useEffect(() => {
-    setHeaderTitle(`Profile: ${data?.User?.firstName} ${data?.User?.lastName}`)
+    setHeaderTitle(`Profile: ${data?.User?.firstName ? data?.User?.firstName : ""} ${data?.User?.lastName ? data?.User?.lastName : ""}`)
   }, [data])
 
   if (status === 'loading') {
