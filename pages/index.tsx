@@ -18,7 +18,7 @@ export default function Home() {
         <title>500 Passport</title>
       </Head>
 
-      <p className="text-sm italic">test</p>
+      <p className="text-sm italic"></p>
     </AccessLayout>
   )
 }

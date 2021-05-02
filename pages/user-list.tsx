@@ -3,7 +3,7 @@ import Head from 'next/head'
 import Layout from "components/common/Layout"
 import { useTranslation } from 'next-i18next'
 
-export default function RolesPermissions() {
+export default function UserGroups() {
   const { t } = useTranslation('profile')
 
   return (
@@ -11,7 +11,7 @@ export default function RolesPermissions() {
       <Head>
         <title>{t('head-title')}</title>
       </Head>
-      <p className="">roles wip</p>
+      <p className="">User list wip</p>
     </Layout>
   )
 }

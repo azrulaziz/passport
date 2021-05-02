@@ -1,10 +1,9 @@
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import Head from 'next/head'
 import Layout from "components/common/Layout"
-import SignIn from 'components/access/SignIn'
 import { useTranslation } from 'next-i18next'
 
-export default function Profile() {
+export default function UserGroups() {
   const { t } = useTranslation('profile')
 
   return (
@@ -12,12 +11,7 @@ export default function Profile() {
       <Head>
         <title>{t('head-title')}</title>
       </Head>
-      <div className="h-screen py-20">
-        test
-      </div>
-      <div className="text-black">
-          test
-      </div>
+      <p className="">User groups wip</p>
     </Layout>
   )
 }
