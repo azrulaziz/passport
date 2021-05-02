@@ -34,17 +34,49 @@ const GET_PROFILE_DATA = gql`
         interest
       }
       CompanyProfiles {
-        id
+        companyName
+        linkedinProfile
+        companyLogo
+        companyFounded
+        companyWebsite
+        sectors
+        stage
+        businessModel
+        describeCompany
+        describeBusinessModel
+        marketChannel
+        useCase
+        whyRightTiming
+        foundingMember
+        outsideFunding
+        fundraisingTarget
+        optionalLink
+        companyLocation
+        incorporatedLocation
       }
       MentorProfiles {
         summary
         region
+        languages
         remote
         familiarSector
         mentoringSector
       }
       InvestorProfiles {
-        id
+        title
+        role
+        minInvestment
+        sweetSpot
+        maxInvestment
+        sectorsOfInterest
+        investmentHistory
+        investmentStage
+        countriesOfInvestment
+        leadInvestor
+        investingAttributes
+        education
+        experience
+        mediaLink
       }
     }
   }
@@ -102,3 +134,5 @@ export const getStaticProps = async ({ locale }) => ({
     ...await serverSideTranslations(locale, ['common', 'profile']),
   }
 })
+
+export {GET_PROFILE_DATA}

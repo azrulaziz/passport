@@ -4,18 +4,40 @@ import Layout from "components/common/Layout"
 import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
 import CompanyProfileForm from 'components/profile/CompanyProfileForm'
-import {useQuery, useQueryClient} from "react-query";
+import {useQuery} from "react-query";
 import { request, gql } from "graphql-request";
 import {useHeaderTitle} from 'store/useHeaderTitle'
 import {endpoint} from 'config'
+import ErrorLayout from 'components/common/ErrorLayout'
+import LoadingLayout from 'components/common/LoadingLayout'
 
-const GET_FORM_DATA = gql`
+
+const GET_COMPANY_PROFILE = gql`
   query  {
-    allSectorsOptions {
-      value
-    }
-    allStageOptions {
-      value
+    User (id: 1) {
+      id
+      CompanyProfiles {
+        id
+        companyName
+        linkedinProfile
+        companyLogo
+        companyFounded
+        companyWebsite
+        sectors
+        stage
+        businessModel
+        describeCompany
+        describeBusinessModel
+        marketChannel
+        useCase
+        whyRightTiming
+        foundingMember
+        outsideFunding
+        fundraisingTarget
+        optionalLink
+        companyLocation
+        incorporatedLocation
+      }
     }
   }
 `;
@@ -25,21 +47,22 @@ export default function EditCompanyProfile() {
   const setHeaderTitle = useHeaderTitle(state => state.setTitle)
   setHeaderTitle(`Edit Company Profile`)
 
-  const fetchEditCompanyProfileData = async () => {
-    const data = await request(endpoint, GET_FORM_DATA);
+  const fetchCompanyProfile = async () => {
+    const data = await request(endpoint, GET_COMPANY_PROFILE);
     return data;
   }
 
-  const { data, status } = useQuery('editCompanyProfileData', fetchEditCompanyProfileData);
+  const { data, status } = useQuery('companyProfile', fetchCompanyProfile);
 
   if (status === 'loading') {
     return (
-      <Layout>
-        <Head>
-          <title>{t('head-title')}</title>
-        </Head>
-        <></>
-      </Layout>
+      <LoadingLayout />
+    )
+  }
+
+  if (status === 'error') {
+    return (
+      <ErrorLayout />
     )
   }
 
@@ -48,7 +71,7 @@ export default function EditCompanyProfile() {
       <Head>
         <title>{t('head-title')}</title>
       </Head>
-      <CompanyProfileForm data={data} />
+      <CompanyProfileForm profileData={data?.User?.CompanyProfiles} />
     </Layout>
   )
 }

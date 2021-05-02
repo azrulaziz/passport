@@ -7,7 +7,13 @@ import "react-datepicker/dist/react-datepicker.css";
 import {DownOutlined, CloseOutlined} from '@ant-design/icons'
 import Select from "react-select";
 import useList from 'lib/useList'
+import {useMutation, useQueryClient} from "react-query";
+import { request, gql } from "graphql-request";
+import {useRouter} from 'next/router'
 import ProfileFormSidePanel from "./ProfileFormSidePanel";
+import {buildArrayValueForReactSelect, buildObjectValueForReactSelect, getArrayOfValueFromReactSelect, getStringValueFromReactSelect} from 'lib/utils'
+import {endpoint} from 'config'
+import useCompletionStatus from 'lib/useCompletionStatus'
 
 interface Props {
     data: any
@@ -52,7 +58,6 @@ const sectorsOptions = [
     {value: "Biotech", label: "Biotech"},
     {value: "Impact", label: "Impact"},
     {value: "e-Commerce", label: "e-Commerce"},
-    {value: "Fintech", label: "Fintech"}
 ]
 
 const stageList = [
@@ -60,8 +65,6 @@ const stageList = [
     { value: "Pre-seed", label: "Pre-seed" },
     { value: "series A", label: "Series A" }
 ]
-
-const foundingMemberList = []
 
 const model = ["Saas", "On-demand", "Mobile App", "Marketplace", "Content", "e-Commerce", "Other", "Cloud (Usage-based)"]
 
@@ -75,45 +78,133 @@ const YearInput = forwardRef(
     ),
 );
 
-const CompanyProfileForm: React.FC<Props> = ({data}) => {
-    const [yearFounded, setYearFounded] = useState();
+const CompanyProfileForm = ({profileData}) => {
+    const router = useRouter()
+    // const [yearFounded, setYearFounded] = useState();
     const {register, control, formState: { errors }, watch , handleSubmit} = useForm<FormValues>({
         defaultValues: {
+            companyName: profileData[0]?.companyName ? profileData[0].companyName : "",
+            linkedinProfile: profileData[0]?.linkedinProfile ? profileData[0].linkedinProfile : "",
+            companyLogo: profileData[0]?.companyLogo ? profileData[0].companyLogo : "",
+            companyFounded: profileData[0]?.companyFounded ? profileData[0].companyFounded : "",
+            companyWebsite: profileData[0]?.companyWebsite ? profileData[0].companyWebsite : "",
             sectors: [],
-            foundingMember: foundingMemberList.length > 0 ? foundingMemberList : [{name: "", email: "", title: "", linkedin: "", isFounder: false}]
+            stage: profileData[0]?.stage ? buildObjectValueForReactSelect(profileData[0].stage) : {},
+            businessModel: profileData[0]?.businessModel ? profileData[0].businessModel : "",
+            describeCompany: profileData[0]?.describeCompany ? profileData[0].describeCompany : "",
+            describeBusinessModel: profileData[0]?.describeBusinessModel ? profileData[0].describeBusinessModel : "",
+            marketChannel: profileData[0]?.marketChannel ? profileData[0].marketChannel : "",
+            useCase: profileData[0]?.useCase ? profileData[0].useCase : "",
+            whyRightTiming: profileData[0]?.whyRightTiming ? profileData[0].whyRightTiming : "",
+            foundingMember: profileData[0]?.foundingMemberList?.length > 0 ? profileData[0]?.foundingMemberList : [{name: "", email: "", title: "", linkedin: "", isFounder: false}],
+            outsideFunding: profileData[0]?.outsideFunding ? profileData[0].outsideFunding : "",
+            fundraisingTarget: profileData[0]?.fundraisingTarget ? profileData[0].fundraisingTarget : "",
+            optionalLink: profileData[0]?.optionalLink ? profileData[0].optionalLink : "",
+            companyLocation: profileData[0]?.companyLocation ? profileData[0].companyLocation : "",
+            incorporatedLocation: profileData[0]?.incorporatedLocation ? profileData[0].incorporatedLocation : "",
         }
     });
+    const watchAllFields = watch();
+    
+    const sectors = useList(profileData[0]?.sectors?.length > 0 ? buildArrayValueForReactSelect(profileData[0].sectors) : [], 3)
+
+    const checkFieldArrayCompletion = (arr): boolean => {
+        for (let i in arr[0]) {
+            if (arr[0][i]) {
+                return true
+            }
+            return false
+        }
+    }
+
+    const companyProfile = useCompletionStatus({
+        companyName: watchAllFields.companyName,
+        linkedinProfile: watchAllFields.linkedinProfile,
+        companyFounded: watchAllFields.companyFounded,
+        companyWebsite: watchAllFields.companyWebsite,
+        sectors: sectors.list.length,
+        stage: watchAllFields.stage.value,
+        businessModel: watchAllFields.businessModel,
+        describeCompany: watchAllFields.describeCompany,
+        describeBusinessModel: watchAllFields.describeBusinessModel,
+        marketChannel: watchAllFields.marketChannel,
+        useCase: watchAllFields.useCase,
+        whyRightTiming: watchAllFields.whyRightTiming,
+        foundingMember: checkFieldArrayCompletion(watchAllFields.foundingMember),
+        outsideFunding: watchAllFields.outsideFunding,
+        fundraisingTarget: watchAllFields.fundraisingTarget,
+        optionalLink: watchAllFields.optionalLink,
+        companyLocation: watchAllFields.companyLocation,
+        incorporatedLocation: watchAllFields.incorporatedLocation
+    })
 
     const {fields, append, remove} = useFieldArray({
           control,
           name: "foundingMember"
     });
 
-    const sectors = useList([], 3)
-
-    const dropdownOptions = (data) => {
-        if (!data) return []
-        const options = data.map(each => {
-            return {
-                value: each.value,
-                label: each.label
-            }
-        })
-        return options
-    }
-
     const handleAddTeamMember = (): void => {
         append({name: "", email: "", title: "", linkedin: "", isFounder: false})
     }
 
-    const handleRemoveTeamMember = (index): void => {
-        console.log(index)
-        remove(index + 1)
-    }
+    const queryClient = useQueryClient()
+    const {mutate: updateProfile} = useMutation((values: FormValues) =>
+        request(endpoint, UPDATE_COMPANY_PROFILE, values), {
+            onError: (error) => {
+                console.log(error)
+            },
+            onSuccess: (data) => {
+                queryClient.invalidateQueries('profile')
+                queryClient.invalidateQueries('companyProfile')
+                router.push('/profile/company-profile')
+            }
+        }
+    );
+
+    const {mutate: createProfile} = useMutation((values: FormValues) =>
+        request(endpoint, CREATE_COMPANY_PROFILE, values), {
+            onError: (error) => {
+                console.log(error)
+            },
+            onSuccess: (data) => {
+                queryClient.invalidateQueries('profile')
+                queryClient.invalidateQueries('companyProfile')
+                router.push('/profile/company-profile')
+            }
+        }
+    );
 
     const handleUpdateCompanyProfile = (data: FormValues) => {
         // mutation here
-        console.log(data)
+        const updateProfileData = {
+            id: profileData[0]?.id || null,
+            companyName: data.companyName,
+            linkedinProfile: data.linkedinProfile,
+            companyFounded: data.companyFounded,
+            companyWebsite: data.companyWebsite,
+            companyLogo: "",
+            sectors: getArrayOfValueFromReactSelect(sectors.list),
+            stage: getStringValueFromReactSelect(data.stage) || "",
+            businessModel: data.businessModel,
+            describeCompany: data.describeCompany,
+            describeBusinessModel: data.describeBusinessModel,
+            marketChannel: data.marketChannel,
+            useCase: data.useCase,
+            whyRightTiming: data.whyRightTiming,
+            foundingMember: data.foundingMember,
+            outsideFunding: data.outsideFunding,
+            fundraisingTarget: data.fundraisingTarget,
+            optionalLink: data.optionalLink,
+            companyLocation: data.companyLocation,
+            incorporatedLocation: data.incorporatedLocation,
+            user_id: 1
+        }
+
+        if (profileData.length < 1) {
+            createProfile(updateProfileData)
+        } else {
+            updateProfile(updateProfileData)
+        }
     }
 
     return (
@@ -153,9 +244,9 @@ const CompanyProfileForm: React.FC<Props> = ({data}) => {
                                     defaultValue=""
                                     render={({ field: {onChange} }) => 
                                         <DatePicker
-                                            selected={yearFounded}
+                                            selected={watchAllFields.companyFounded ? new Date(watchAllFields.companyFounded) : null}
                                             onChange={date => {
-                                                setYearFounded(date)
+                                                // setYearFounded(date)
                                                 onChange(date)
                                             }}
                                             showYearPicker
@@ -184,7 +275,7 @@ const CompanyProfileForm: React.FC<Props> = ({data}) => {
                             labelClassName="profile-form-label"
                             labelText="What sectors are your business in?"
                             control={control}
-                            optionsArray={dropdownOptions(data.allSectorsOptions)}
+                            optionsArray={sectorsOptions}
                             listHook={sectors}
                             subLabel="Choose up to 3 sectors"
                             placeholder="Type in your sector..."
@@ -274,7 +365,7 @@ const CompanyProfileForm: React.FC<Props> = ({data}) => {
                                                     errors={errors}
                                                     inputName={`foundingMember.${index}.isFounder`}
                                                     validation={{}}
-                                                    labelClassName="profile-form-label pb-1 px-1 align-middle text-xs"
+                                                    labelClassName="profile-form-label pb-2 px-1 align-middle text-xs"
                                                     labelText="This person is a founder"
                                                     defaultChecked={field.isFounder}
                                                 />
@@ -428,7 +519,7 @@ const CompanyProfileForm: React.FC<Props> = ({data}) => {
                 </FormContentPanel>
             </div>
             <ProfileFormSidePanel 
-                completionPercentage={0}
+                completionPercentage={companyProfile.completionPercentage}
                 sections={['introduction', 'founding team', 'the business', 'fundraising', 'supplementary files']} 
             />
         </form>
@@ -436,6 +527,124 @@ const CompanyProfileForm: React.FC<Props> = ({data}) => {
 }
 
 export default CompanyProfileForm
+
+
+const CREATE_COMPANY_PROFILE = gql`
+  mutation CREATE_COMPANY_PROFILE(
+        $companyName: String!,
+        $linkedinProfile: String!, 
+        $companyFounded: String!, 
+        $companyWebsite: String!, 
+        $companyLogo: String!,
+        $sectors: [String]!,
+        $stage: String!,
+        $businessModel: String!, 
+        $describeCompany: String!, 
+        $describeBusinessModel: String!, 
+        $marketChannel: String!, 
+        $useCase: String!, 
+        $whyRightTiming: String!, 
+        $foundingMember: JSON!, 
+        $outsideFunding: String!, 
+        $fundraisingTarget: String!, 
+        $optionalLink: String!,
+        $companyLocation: String!, 
+        $incorporatedLocation: String!,  
+        $user_id: ID!
+    )  {
+    createCompanyProfile (
+        companyName: $companyName,
+        linkedinProfile: $linkedinProfile, 
+        companyFounded: $companyFounded, 
+        companyWebsite: $companyWebsite, 
+        companyLogo: $companyLogo,
+        sectors: $sectors,
+        stage: $stage,
+        businessModel: $businessModel, 
+        describeCompany: $describeCompany, 
+        describeBusinessModel: $describeBusinessModel, 
+        marketChannel: $marketChannel, 
+        useCase: $useCase, 
+        whyRightTiming: $whyRightTiming, 
+        foundingMember: $foundingMember, 
+        outsideFunding: $outsideFunding, 
+        fundraisingTarget: $fundraisingTarget, 
+        optionalLink: $optionalLink,
+        companyLocation: $companyLocation, 
+        incorporatedLocation: $incorporatedLocation,  
+        user_id: $user_id
+    ) {
+        id
+    }
+  }
+`;
+
+const UPDATE_COMPANY_PROFILE = gql`
+  mutation UPDATE_COMPANY_PROFILE(
+        $id: ID!, 
+        $companyName: String!,
+        $linkedinProfile: String!, 
+        $companyFounded: String!, 
+        $companyWebsite: String!, 
+        $companyLogo: String!,
+        $sectors: [String]!,
+        $stage: String!,
+        $businessModel: String!, 
+        $describeCompany: String!, 
+        $describeBusinessModel: String!, 
+        $marketChannel: String!, 
+        $useCase: String!, 
+        $whyRightTiming: String!, 
+        $foundingMember: JSON!, 
+        $outsideFunding: String!, 
+        $fundraisingTarget: String!, 
+        $optionalLink: String!,
+        $companyLocation: String!, 
+        $incorporatedLocation: String!,  
+        $user_id: ID!
+    )  {
+    updateCompanyProfile (
+        id: $id, 
+        companyName: $companyName,
+        linkedinProfile: $linkedinProfile, 
+        companyFounded: $companyFounded, 
+        companyWebsite: $companyWebsite,
+        companyLogo: $companyLogo, 
+        sectors: $sectors,
+        stage: $stage,
+        businessModel: $businessModel, 
+        describeCompany: $describeCompany, 
+        describeBusinessModel: $describeBusinessModel, 
+        marketChannel: $marketChannel, 
+        useCase: $useCase, 
+        whyRightTiming: $whyRightTiming, 
+        foundingMember: $foundingMember, 
+        outsideFunding: $outsideFunding, 
+        fundraisingTarget: $fundraisingTarget, 
+        optionalLink: $optionalLink,
+        companyLocation: $companyLocation, 
+        incorporatedLocation: $incorporatedLocation,  
+        user_id: $user_id
+    ) {
+        id,
+    }
+  }
+`;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

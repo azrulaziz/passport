@@ -9,7 +9,6 @@ import ProfileFormSidePanel from "./ProfileFormSidePanel";
 import {useMutation, useQueryClient} from "react-query";
 import { request, gql } from "graphql-request";
 import {useRouter} from 'next/router'
-import { v4 as uuidv4 } from 'uuid';
 import {buildArrayValueForReactSelect, buildObjectValueForReactSelect, getArrayOfValueFromReactSelect, getStringValueFromReactSelect} from 'lib/utils'
 import {endpoint} from 'config'
 
@@ -58,7 +57,7 @@ const MentorProfileForm = ({profileData}) => {
     
     const mentorProfile = useCompletionStatus({
         summary: watchAllFields.summary,
-        region: watchAllFields.region,
+        region: watchAllFields.region.value,
         languages: watchAllFields.languages,
         remote: watchAllFields.remote,
         familiarSector: familiarSector.list.length,
@@ -93,29 +92,20 @@ const MentorProfileForm = ({profileData}) => {
     );
 
     const handleUpdateMentorProfile = (data: FormValues) => {
+        const updateProfileData = {
+            id: profileData[0]?.id || null,
+            summary: data.summary,
+            region: getStringValueFromReactSelect(data.region) || "",
+            languages: data.languages,
+            remote: data.remote,
+            familiarSector: getArrayOfValueFromReactSelect(familiarSector.list),
+            mentoringSector: getArrayOfValueFromReactSelect(mentoringSector.list),
+            user_id: 1
+        }
+
         if (profileData.length < 1) {
-            const createProfileData = {
-                id: uuidv4(),
-                summary: data.summary,
-                region: getStringValueFromReactSelect(data.region) || "",
-                languages: data.languages,
-                remote: data.remote,
-                familiarSector: getArrayOfValueFromReactSelect(familiarSector.list),
-                mentoringSector: getArrayOfValueFromReactSelect(mentoringSector.list),
-                user_id: 1
-            }
-            createProfile(createProfileData)
+            createProfile(updateProfileData)
         } else {
-            const updateProfileData = {
-                id: profileData[0].id,
-                summary: data.summary,
-                region: getStringValueFromReactSelect(data.region) || "",
-                languages: data.languages,
-                remote: data.remote,
-                familiarSector: getArrayOfValueFromReactSelect(familiarSector.list),
-                mentoringSector: getArrayOfValueFromReactSelect(mentoringSector.list),
-                user_id: 1
-            }
             updateProfile(updateProfileData)
         }
     }
@@ -212,7 +202,7 @@ export default MentorProfileForm
 
 const CREATE_MENTOR_PROFILE = gql`
   mutation CREATE_MENTOR_PROFILE(
-        $id: ID!, 
+        
         $summary: String!,
         $region: String!, 
         $languages: String!, 
@@ -222,7 +212,6 @@ const CREATE_MENTOR_PROFILE = gql`
         $user_id: ID!
     )  {
     createMentorProfile (
-        id: $id, 
         summary: $summary,
         region: $region, 
         languages: $languages, 

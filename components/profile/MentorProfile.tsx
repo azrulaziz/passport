@@ -1,4 +1,4 @@
-import {AlignLeftOutlined, ExperimentOutlined, BlockOutlined} from '@ant-design/icons'
+import {AlignLeftOutlined, ApartmentOutlined, BlockOutlined} from '@ant-design/icons'
 import useSectionCompletion from 'lib/useSectionCompletion'
 import SectionCompletion from './SectionCompletion'
 import SectionPanel from './SectionPanel'
@@ -16,11 +16,21 @@ const MentorProfile = ({profile}) => {
         <div className="space-y-4">
             <SectionCompletion profileName="mentorship" section={mentorProfile.incompleteSection} editProfileLink="/profile/edit-mentor-profile" />
 
-            {profile[0]?.summary || profile[0].region || profile[0].languages || profile[0].remote ?
+            {profile[0]?.summary || profile[0]?.region || profile[0]?.languages || profile[0]?.remote ?
             <SectionPanel panelTitle="Summary" icon={<AlignLeftOutlined />}>
                 <Summary summary={profile[0]?.summary} />
-                <Region region={profile[0].region} />
-                <Languages languages={profile[0].languages} />
+                <InlineTextPanel title="Region" data={profile[0].region} />
+                <InlineTextPanel title="Languages" data={profile[0].languages} />
+                <InlineTextPanel title="Remote Team" data={profile[0].remote} />
+            </SectionPanel>
+            :
+            <></>
+            }
+
+            {profile[0]?.familiarSector.length > 0 ||  profile[0]?.mentoringSector.length > 0 ?
+            <SectionPanel panelTitle="Expertise" icon={<ApartmentOutlined />}>
+                <InlineTagPanel title="Primary Expertise" data={profile[0].familiarSector} />
+                <InlineTagPanel title="Industry Expertise" data={profile[0].mentoringSector} />
             </SectionPanel>
             :
             <></>
@@ -42,24 +52,32 @@ const Summary = ({summary}) => {
     )
 }
 
-const Region = ({region}) => {
-    if (!region) return <></>
+const InlineTextPanel = ({title, data}) => {
+    if (!data) return <></>
 
     return (
         <div className="flex">
-            <p className="w-1/3 text-sm text-gray-10">Region:</p>
-            <p className="w-2/3 text-sm text-gray-10">{region}</p>
+            <p className="w-1/3 text-sm text-gray-10">{title}:</p>
+            <p className="w-2/3 text-sm text-gray-10">{data}</p>
         </div>
     )
 }
 
-const Languages = ({languages}) => {
-    if (!languages) return <></>
-
+const InlineTagPanel = ({title, data}) => {
+    if (data.length < 1) return <></>
     return (
-        <div className="flex">
-            <p className="w-1/3 text-sm text-gray-10">Languages:</p>
-            <p className="w-2/3 text-sm text-gray-10">{languages}</p>
+        <div className="flex items-center">
+            <p className="w-1/3 text-sm text-gray-10">{title}:</p>
+            <div className="w-2/3 space-x-1">
+            {data.map(each => {
+                return (
+                    <p key={each} className="px-2 py-1 inline-block text-gray-9 text-xs bg-gray-2 border border-gray-5 rounded-sm">
+                        {each}
+                    </p>
+                )
+            })}
+
+            </div>
         </div>
     )
 }

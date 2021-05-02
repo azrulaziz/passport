@@ -13,43 +13,7 @@ import LoadingLayout from 'components/common/LoadingLayout'
 import {useHeaderTitle} from 'store/useHeaderTitle'
 import { useEffect } from 'react'
 import {endpoint} from 'config'
-
-const GET_PROFILE_DATA = gql`
-  query  {
-    User (id: 1) {
-      id
-      email
-      firstName
-      lastName
-      suffix
-      preferredName
-      gender
-      headline
-      linkedinUrl
-      photo
-      UserProfiles {
-        summary
-        skills
-        tools
-        interest
-      }
-      CompanyProfiles {
-        id
-      }
-      MentorProfiles {
-        summary
-        region
-        languages
-        remote
-        familiarSector
-        mentoringSector
-      }
-      InvestorProfiles {
-        id
-      }
-    }
-  }
-`;
+import {GET_PROFILE_DATA} from './index'
 
 
 export default function MentorProfilePage() {

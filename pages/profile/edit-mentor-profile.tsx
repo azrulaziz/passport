@@ -18,6 +18,7 @@ const GET_MENTOR_PROFILE = gql`
         id
         summary
         region
+        languages
         remote
         familiarSector
         mentoringSector
@@ -38,7 +39,7 @@ export default function EditMentorProfile() {
     return data;
   }
 
-  const { data, status } = useQuery('profile', fetchMentorProfile);
+  const { data, status } = useQuery('mentorProfile', fetchMentorProfile);
 
   if (status === 'loading') {
     return (

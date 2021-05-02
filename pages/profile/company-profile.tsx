@@ -7,62 +7,13 @@ import PersonalInfoPanel from 'components/profile/PersonalInfoPanel'
 import AddProfilePanel from 'components/profile/AddProfilePanel'
 import {useQuery, useQueryClient} from "react-query";
 import { request, gql } from "graphql-request";
-import MentorProfile from 'components/profile/MentorProfile'
+import CompanyProfile from 'components/profile/CompanyProfile'
 import ErrorLayout from 'components/common/ErrorLayout'
 import LoadingLayout from 'components/common/LoadingLayout'
 import {useHeaderTitle} from 'store/useHeaderTitle'
 import { useEffect } from 'react'
 import {endpoint} from 'config'
-
-const GET_PROFILE_DATA = gql`
-  query  {
-    User (id: 1) {
-      id
-      email
-      firstName
-      lastName
-      suffix
-      preferredName
-      gender
-      headline
-      linkedinUrl
-      photo
-      UserProfiles {
-        summary
-        skills
-        tools
-        interest
-      }
-      CompanyProfiles {
-        companyName
-        linkedinProfile
-        companyLogo
-        companyFounded
-        companyWebsite
-        sectors
-        stage
-        businessModel
-        describeCompany
-        describeBusinessModel
-        marketChannel
-        useCase
-        whyRightTiming
-        foundingMember
-        outsideFunding
-        fundraisingTarget
-        optionalLink
-        companyLocation
-        incorporatedLocation
-      }
-      MentorProfiles {
-        id
-      }
-      InvestorProfiles {
-        id
-      }
-    }
-  }
-`;
+import {GET_PROFILE_DATA} from './index'
 
 
 export default function CompanyProfilePage() {
@@ -100,7 +51,7 @@ export default function CompanyProfilePage() {
       </Head>
       <ProfileLayout 
         personalInfo={<PersonalInfoPanel data={data} />}
-        main={<MentorProfile profile={data?.User?.MentorProfiles} />} 
+        main={<CompanyProfile profile={data?.User?.CompanyProfiles} />} 
         side={
         <div className="lg:mt-10">
           <AddProfilePanel data={data} />

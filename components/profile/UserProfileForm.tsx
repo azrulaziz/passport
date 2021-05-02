@@ -8,7 +8,6 @@ import ProfileFormSidePanel from './ProfileFormSidePanel';
 import {useMutation, useQueryClient} from "react-query";
 import { request, gql } from "graphql-request";
 import {useRouter} from 'next/router'
-import { v4 as uuidv4 } from 'uuid';
 import {buildArrayValueForReactSelect, getArrayOfValueFromReactSelect} from 'lib/utils'
 import {endpoint} from 'config'
 
@@ -80,7 +79,6 @@ const UserProfileForm = ({profileData}) => {
     const handleUpdateUserProfile = (data: FormValues) => {
         if (profileData.length < 1) {
             const createUserProfileData = {
-                id: uuidv4(),
                 summary: data.summary,
                 skills: getArrayOfValueFromReactSelect(skills.list),
                 tools: getArrayOfValueFromReactSelect(tools.list),
@@ -182,9 +180,9 @@ const interestOptions = [
 ]
 
 const CREATE_USER_PROFILE = gql`
-  mutation CREATE_USER_PROFILE($id: ID!, $summary: String!, $skills: [String]!, $tools: [String]!, $interest: [String]!, $user_id: ID!)  {
-    createUserProfile (id: $id, summary: $summary, skills: $skills, tools: $tools, interest: $interest, user_id: $user_id) {
-        id,
+  mutation CREATE_USER_PROFILE($summary: String!, $skills: [String]!, $tools: [String]!, $interest: [String]!, $user_id: ID!)  {
+    createUserProfile (summary: $summary, skills: $skills, tools: $tools, interest: $interest, user_id: $user_id) {
+        
         summary,
         skills,
         tools,

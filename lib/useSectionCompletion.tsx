@@ -10,7 +10,7 @@ const useSectionCompletion = (profile) => {
                 profile[0][i] ? null : incompleteSection.push(_.startCase(i))
             } else if (typeof profile[0][i] === "object" && Array.isArray(profile[0][i])) {
                 profile[0][i].length > 0 ? null : incompleteSection.push(_.startCase(i))
-            }
+            } 
         }
         return incompleteSection
     }
