@@ -10,6 +10,7 @@ import { request, gql } from "graphql-request";
 import {useRouter} from 'next/router'
 import { v4 as uuidv4 } from 'uuid';
 import {buildArrayValueForReactSelect, getArrayOfValueFromReactSelect} from 'lib/utils'
+import {endpoint} from 'config'
 
 type SelectObj = {
     value: string
@@ -49,7 +50,7 @@ const UserProfileForm = ({profileData}) => {
 
     const queryClient = useQueryClient()
     const {mutate: updateProfile} = useMutation((values: FormValues) =>
-        request("http://localhost:4000/graphql/", UPDATE_USER_PROFILE, values), {
+        request(endpoint, UPDATE_USER_PROFILE, values), {
             onError: (error) => {
                 console.log(error)
             },
@@ -63,7 +64,7 @@ const UserProfileForm = ({profileData}) => {
     );
 
     const {mutate: createProfile} = useMutation((values: FormValues) =>
-        request("http://localhost:4000/graphql/", CREATE_USER_PROFILE, values), {
+        request(endpoint, CREATE_USER_PROFILE, values), {
             onError: (error) => {
                 console.log(error)
             },

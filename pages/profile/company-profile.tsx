@@ -5,13 +5,13 @@ import { useTranslation } from 'next-i18next'
 import ProfileLayout from 'components/profile/ProfileLayout'
 import PersonalInfoPanel from 'components/profile/PersonalInfoPanel'
 import AddProfilePanel from 'components/profile/AddProfilePanel'
-import {useQuery} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import { request, gql } from "graphql-request";
-import UserProfile from 'components/profile/UserProfile'
+import MentorProfile from 'components/profile/MentorProfile'
 import ErrorLayout from 'components/common/ErrorLayout'
 import LoadingLayout from 'components/common/LoadingLayout'
 import {useHeaderTitle} from 'store/useHeaderTitle'
-import {useEffect} from 'react'
+import { useEffect } from 'react'
 import {endpoint} from 'config'
 
 const GET_PROFILE_DATA = gql`
@@ -34,14 +34,28 @@ const GET_PROFILE_DATA = gql`
         interest
       }
       CompanyProfiles {
-        id
+        companyName
+        linkedinProfile
+        companyLogo
+        companyFounded
+        companyWebsite
+        sectors
+        stage
+        businessModel
+        describeCompany
+        describeBusinessModel
+        marketChannel
+        useCase
+        whyRightTiming
+        foundingMember
+        outsideFunding
+        fundraisingTarget
+        optionalLink
+        companyLocation
+        incorporatedLocation
       }
       MentorProfiles {
-        summary
-        region
-        remote
-        familiarSector
-        mentoringSector
+        id
       }
       InvestorProfiles {
         id
@@ -51,20 +65,20 @@ const GET_PROFILE_DATA = gql`
 `;
 
 
-export default function Profile() {
+export default function CompanyProfilePage() {
   const { t } = useTranslation('profile')
   const setHeaderTitle = useHeaderTitle(state => state.setTitle)
   
 
-  
   const fetchProfile = async () => {
     const data = await request(endpoint, GET_PROFILE_DATA);
     return data;
   }
+
   const { data, status } = useQuery('profile', fetchProfile);
-  
+
   useEffect(() => {
-    setHeaderTitle(`Profile: ${data?.User?.firstName ? data?.User?.firstName : ""} ${data?.User?.lastName ? data?.User?.lastName : ""}`)
+    setHeaderTitle(`Profile: ${data?.User?.firstName} ${data?.User?.lastName}`)
   }, [data])
 
   if (status === 'loading') {
@@ -78,7 +92,6 @@ export default function Profile() {
       <ErrorLayout />
     )
   }
-  
 
   return (
     <Layout>
@@ -87,7 +100,7 @@ export default function Profile() {
       </Head>
       <ProfileLayout 
         personalInfo={<PersonalInfoPanel data={data} />}
-        main={<UserProfile profile={data?.User?.UserProfiles} />} 
+        main={<MentorProfile profile={data?.User?.MentorProfiles} />} 
         side={
         <div className="lg:mt-10">
           <AddProfilePanel data={data} />

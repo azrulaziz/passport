@@ -7,6 +7,7 @@ import CompanyProfileForm from 'components/profile/CompanyProfileForm'
 import {useQuery, useQueryClient} from "react-query";
 import { request, gql } from "graphql-request";
 import {useHeaderTitle} from 'store/useHeaderTitle'
+import {endpoint} from 'config'
 
 const GET_FORM_DATA = gql`
   query  {
@@ -25,7 +26,7 @@ export default function EditCompanyProfile() {
   setHeaderTitle(`Edit Company Profile`)
 
   const fetchEditCompanyProfileData = async () => {
-    const data = await request("http://localhost:4000/graphql/", GET_FORM_DATA);
+    const data = await request(endpoint, GET_FORM_DATA);
     return data;
   }
 

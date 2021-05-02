@@ -8,6 +8,7 @@ import { request, gql } from "graphql-request";
 import ErrorLayout from 'components/common/ErrorLayout'
 import LoadingLayout from 'components/common/LoadingLayout'
 import {useHeaderTitle} from 'store/useHeaderTitle'
+import {endpoint} from 'config'
 
 const GET_USER_PROFILE = gql`
   query  {
@@ -32,7 +33,7 @@ export default function EditUserProfile() {
   setHeaderTitle(`Edit User Profile`)
 
   const fetchUserProfile = async () => {
-    const data = await request("http://localhost:4000/graphql/", GET_USER_PROFILE);
+    const data = await request(endpoint, GET_USER_PROFILE);
     return data;
   }
 

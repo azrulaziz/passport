@@ -11,6 +11,7 @@ import { request, gql } from "graphql-request";
 import {useRouter} from 'next/router'
 import { v4 as uuidv4 } from 'uuid';
 import {buildArrayValueForReactSelect, buildObjectValueForReactSelect, getArrayOfValueFromReactSelect, getStringValueFromReactSelect} from 'lib/utils'
+import {endpoint} from 'config'
 
 type SelectObj = {
     value: string
@@ -66,7 +67,7 @@ const MentorProfileForm = ({profileData}) => {
 
     const queryClient = useQueryClient()
     const {mutate: updateProfile} = useMutation((values: FormValues) =>
-        request("http://localhost:4000/graphql/", UPDATE_MENTOR_PROFILE, values), {
+        request(endpoint, UPDATE_MENTOR_PROFILE, values), {
             onError: (error) => {
                 console.log(error)
             },
@@ -79,7 +80,7 @@ const MentorProfileForm = ({profileData}) => {
     );
 
     const {mutate: createProfile} = useMutation((values: FormValues) =>
-        request("http://localhost:4000/graphql/", CREATE_MENTOR_PROFILE, values), {
+        request(endpoint, CREATE_MENTOR_PROFILE, values), {
             onError: (error) => {
                 console.log(error)
             },

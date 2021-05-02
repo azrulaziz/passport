@@ -8,6 +8,7 @@ import Dropzone from './PhotoUpload'
 import {useMutation, useQueryClient} from "react-query";
 import { request, gql } from "graphql-request";
 import {useRouter} from 'next/router'
+import {endpoint} from 'config'
 
 interface Props {
     data: {
@@ -64,7 +65,7 @@ const PersonalInfoForm: React.FC<Props> = ({data: {User}}) => {
 
     const queryClient = useQueryClient()
     const {mutate} = useMutation((values: FormValues) =>
-        request("http://localhost:4000/graphql/", UPDATE_PERSONAL_INFO, values), {
+        request(endpoint, UPDATE_PERSONAL_INFO, values), {
             onError: (error) => {
                 console.log(error)
             },

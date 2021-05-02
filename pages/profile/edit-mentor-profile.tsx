@@ -8,6 +8,7 @@ import { request, gql } from "graphql-request";
 import ErrorLayout from 'components/common/ErrorLayout'
 import LoadingLayout from 'components/common/LoadingLayout'
 import {useHeaderTitle} from 'store/useHeaderTitle'
+import {endpoint} from 'config'
 
 const GET_MENTOR_PROFILE = gql`
   query  {
@@ -33,7 +34,7 @@ export default function EditMentorProfile() {
   setHeaderTitle(`Edit Mentor Profile`)
 
   const fetchMentorProfile = async () => {
-    const data = await request("http://localhost:4000/graphql/", GET_MENTOR_PROFILE);
+    const data = await request(endpoint, GET_MENTOR_PROFILE);
     return data;
   }
 

@@ -36,9 +36,7 @@ html, body {
       @apply pb-2 text-sm text-gray-10;
     }
   
-    .ant-collapse-content > .ant-collapse-content-box {
-      padding: 0px 0px !important; 
-    }
+    
     .sub-heading {
         @apply text-sm text-primary-black font-black;
     }
@@ -58,4 +56,8 @@ html, body {
     .collapsed-link {
       @apply py-3 px-4 text-xs text-gray-9 flex space-x-2 my-2 cursor-pointer;
     }
+}
+
+.ant-collapse-content > .ant-collapse-content-box {
+  padding: 0px 0px !important; 
 }

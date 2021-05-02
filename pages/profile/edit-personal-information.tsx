@@ -7,6 +7,7 @@ import PersonalInfoForm from 'components/profile/PersonalInfoForm'
 import { useRouter } from 'next/router'
 import {useQuery} from "react-query";
 import { request, gql } from "graphql-request";
+import {endpoint} from 'config'
 
 const GET_PERSONAL_INFO = gql`
   query  {
@@ -29,7 +30,7 @@ export default function EditPersonalInfo() {
   const router = useRouter()
 
   const fetchPersonalInfo = async () => {
-    const data = await request("http://localhost:4000/graphql/", GET_PERSONAL_INFO);
+    const data = await request(endpoint, GET_PERSONAL_INFO);
     return data;
   }
   const { data, status } = useQuery('personalInfoForm', fetchPersonalInfo);
