@@ -61,10 +61,10 @@ export const InputCheckbox = ({register, errors, inputName, validation, labelCla
                 defaultChecked={defaultChecked}
                 aria-invalid={errors[inputName] ? "true" : "false"}
                 {...register(inputName, validation)}
-                className="checked:bg-blue-600 checked:border-transparent w-5 h-5"
+                className="checked:bg-blue-600 checked:border-transparent w-5 h-5 transform translate-y-1"
                 {...props}
                 />
-            <label htmlFor={labelText} className={`${labelClassName}`}>{labelText}</label>
+            <label htmlFor={labelText} className={`${labelClassName} `}>{labelText}</label>
         </div>
     )
 }
@@ -146,11 +146,11 @@ export const SelectInput = ({inputName, labelText, labelClassName, control, opti
             <label htmlFor={inputName} className={`${labelClassName}`}>{labelText}</label>
             <div className="w-full">
                 <Controller
-                    name="region"
+                    name={inputName}
                     control={control}
                     render={({ field }) => 
                         <Select 
-                            inputId="region"
+                            inputId={inputName}
                             {...field} 
                             className={`${inputStyle} w-40 `}
                             options={optionsArray} 

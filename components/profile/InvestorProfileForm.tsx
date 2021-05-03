@@ -11,6 +11,13 @@ import "react-datepicker/dist/react-datepicker.css";
 import { PrimaryButton } from "components/common/Button";
 import MediaCard from "./MediaCard";
 
+import {useMutation, useQueryClient} from "react-query";
+import { request, gql } from "graphql-request";
+import {useRouter} from 'next/router'
+import {buildArrayValueForReactSelect, buildObjectValueForReactSelect, getArrayOfValueFromReactSelect, getStringValueFromReactSelect} from 'lib/utils'
+import {endpoint} from 'config'
+import useCompletionStatus from 'lib/useCompletionStatus'
+
 type SelectObj = {
     value: string
     label: string
@@ -47,7 +54,7 @@ interface FormValues {
     investmentHistory: PreviousInvestment[],
     investmentStage: SelectObj[],
     countriesOfInvestment: SelectObj[]
-    leadInvestor: SelectObj[]
+    leadInvestor: SelectObj
     investingAttributes: string[]
     education: EducationObj[]
     experience: ExperienceObj[]
@@ -58,6 +65,12 @@ const sectorsOptions = [
     {value: "Biotech", label: "Biotech"},
     {value: "Impact", label: "Impact"},
     {value: "e-Commerce", label: "e-Commerce"},
+]
+
+const investmentStageOptions = [
+    {value: "Pre-seed", label: "Pre-seed"},
+    {value: "Seed", label: "Seed"},
+    {value: "Series A", label: "Series A"},
 ]
 
 const countriesOptions = [
@@ -80,50 +93,73 @@ const investingAttributesOptions = [
     "I invest in female founders"
 ]
 
-const educationHistoryList = []
-const experienceHistoryList = []
-const investmentHistoryList = []
-
-const InvestorProfileForm: React.FC = () => {
+const InvestorProfileForm = ({profileData}) => {
+    const router = useRouter()
     const {register, control, formState: { errors }, watch, setError, handleSubmit} = useForm<FormValues>({
         defaultValues: {
-            title: "",
-            role: "",
-            minInvestment: "",
-            sweetSpot: "",
-            maxInvestment: "",
+            title: profileData[0]?.title ? profileData[0].title : "",
+            role: profileData[0]?.role ? profileData[0].role : "",
+            minInvestment: profileData[0]?.minInvestment ? profileData[0].minInvestment : "",
+            sweetSpot: profileData[0]?.sweetSpot ? profileData[0].sweetSpot : "",
+            maxInvestment: profileData[0]?.maxInvestment ? profileData[0].maxInvestment : "",
             sectorsOfInterest: [],
-            investmentHistory: investmentHistoryList.length > 0 ? investmentHistoryList : [{
+            investmentHistory: profileData[0]?.investmentHistory?.length > 0 ? profileData[0]?.investmentHistory : [{
                 company: "",
                 fundingRound: "",
                 date: "",
                 roundSize: "",
                 totalRaised: ""
             }],
-            investmentStage: [],
-            countriesOfInvestment: [],
-            leadInvestor: [],
-            investingAttributes: [],
-            education: educationHistoryList.length > 0 ? educationHistoryList : [{
+            investmentStage: profileData[0]?.investmentStage?.length > 0 ? buildArrayValueForReactSelect(profileData[0]?.investmentStage) : [],
+            countriesOfInvestment: profileData[0]?.countriesOfInvestment?.length > 0 ? buildArrayValueForReactSelect(profileData[0]?.countriesOfInvestment) : [],
+            leadInvestor: profileData[0]?.leadInvestor ? buildObjectValueForReactSelect(profileData[0].leadInvestor) : {},
+            investingAttributes: profileData[0]?.investingAttributes?.length > 0 ? profileData[0]?.investingAttributes : [],
+            education: profileData[0]?.education?.length > 0 ? profileData[0]?.education : [{
                 school: "",
                 degree: "",
                 field: ""
             }],
-            experience: experienceHistoryList.length > 0 ? experienceHistoryList : [{
+            experience: profileData[0]?.experience?.length > 0 ? profileData[0]?.experience : [{
                 company: "",
                 position: "",
                 startDate: "",
                 endDate: ""
             }], 
-            mediaLink: ""
+            mediaLink: "",
         }
     });
-    
+    const watchAllFields = watch();
     const watchInvestingAttributesValue = watch('investingAttributes')
     const watchMediaLink = watch('mediaLink')
 
-    const sectorsOfInterest = useList([], 10)
-    const mediaLinks = useList([])
+    const sectorsOfInterest = useList(profileData[0]?.sectorsOfInterest?.length > 0 ? buildArrayValueForReactSelect(profileData[0].sectorsOfInterest) : [], 10)
+    const mediaLinks = useList(profileData[0]?.mediaLink?.length > 0 ? profileData[0]?.mediaLink : [])
+
+    const checkFieldArrayCompletion = (arr): boolean => {
+        for (let i in arr[0]) {
+            if (arr[0][i]) {
+                return true
+            }
+            return false
+        }
+    }
+
+    const investorProfile = useCompletionStatus({
+        title: watchAllFields.title,
+        role: watchAllFields.role,
+        minInvestment: watchAllFields.minInvestment,
+        sweetSpot: watchAllFields.sweetSpot,
+        maxInvestment: watchAllFields.maxInvestment,
+        sectorsOfInterest: sectorsOfInterest.list.length,
+        investmentHistory: checkFieldArrayCompletion(watchAllFields.investmentHistory),
+        investmentStage: watchAllFields.investmentStage.length,
+        countriesOfInvestment: watchAllFields.countriesOfInvestment.length,
+        leadInvestor: watchAllFields.leadInvestor.value,
+        investingAttributes: watchAllFields.investingAttributes.length,
+        // education: checkFieldArrayCompletion(watchAllFields.education),
+        // experience: checkFieldArrayCompletion(watchAllFields.experience),
+        mediaLink: mediaLinks.list.length,
+    })
     
     const {
         fields: investmentHistoryFields, 
@@ -187,8 +223,58 @@ const InvestorProfileForm: React.FC = () => {
         mediaLinks.handleRemoveValue(each)
     }
 
+    const queryClient = useQueryClient()
+    const {mutate: updateProfile} = useMutation((values: FormValues) =>
+        request(endpoint, UPDATE_INVESTOR_PROFILE, values), {
+            onError: (error) => {
+                console.log(error)
+            },
+            onSuccess: (data) => {
+                queryClient.invalidateQueries('profile')
+                queryClient.invalidateQueries('investorProfile')
+                router.push('/profile/investor-profile')
+            }
+        }
+    );
+
+    const {mutate: createProfile} = useMutation((values: FormValues) =>
+        request(endpoint, CREATE_INVESTOR_PROFILE, values), {
+            onError: (error) => {
+                console.log(error)
+            },
+            onSuccess: (data) => {
+                queryClient.invalidateQueries('profile')
+                queryClient.invalidateQueries('investorProfile')
+                router.push('/profile/investor-profile')
+            }
+        }
+    );
+
     const handleUpdateInvestorProfile = (data: FormValues) => {
-        console.log(data)
+        const updateProfileData = {
+            id: profileData[0]?.id || null,
+            title: data.title,
+            role: data.role,
+            minInvestment: data.minInvestment,
+            sweetSpot: data.sweetSpot,
+            maxInvestment: data.maxInvestment,
+            sectorsOfInterest: getArrayOfValueFromReactSelect(sectorsOfInterest.list),
+            investmentHistory: data.investmentHistory,
+            investmentStage: getArrayOfValueFromReactSelect(data.investmentStage),
+            countriesOfInvestment: getArrayOfValueFromReactSelect(data.countriesOfInvestment),
+            leadInvestor: getStringValueFromReactSelect(data.leadInvestor) || "",
+            investingAttributes: data.investingAttributes,
+            education: data.education,
+            experience: data.experience,
+            mediaLink: mediaLinks.list,
+            user_id: 1
+        }
+
+        if (profileData.length < 1) {
+            createProfile(updateProfileData)
+        } else {
+            updateProfile(updateProfileData)
+        }
     }
 
     return (
@@ -267,7 +353,7 @@ const InvestorProfileForm: React.FC = () => {
                             labelClassName="profile-form-label"
                             labelText="Investment Stage(s):"
                             control={control}
-                            optionsArray={sectorsOptions}
+                            optionsArray={investmentStageOptions}
                             placeholder="Type your stages here..."
                         />
                         <AsyncMultiSelectInsideInput 
@@ -352,7 +438,7 @@ const InvestorProfileForm: React.FC = () => {
                                             defaultValue={field.fundingRound}
                                         />
 
-                                        <DateInput 
+                                        {/* <DateInput 
                                             labelText="Date:"
                                             labelClassName="profile-form-label w-1/3"
                                             inputName={`investmentHistory.${index}.date`}
@@ -364,7 +450,7 @@ const InvestorProfileForm: React.FC = () => {
                                             index={index}
                                             inputGroup="investmentHistory"
                                             fieldName="date"
-                                        />
+                                        /> */}
 
                                         <TextInputInline
                                             register={register}
@@ -535,7 +621,7 @@ const InvestorProfileForm: React.FC = () => {
                                             labelText="Position:"
                                             defaultValue={field.position}
                                         />
-                                        <DateInput 
+                                        {/* <DateInput 
                                             labelText="Start Date:"
                                             labelClassName="profile-form-label w-1/3"
                                             inputName={`experience.${index}.startDate`}
@@ -560,7 +646,7 @@ const InvestorProfileForm: React.FC = () => {
                                             index={index}
                                             inputGroup="experience"
                                             fieldName="endDate"
-                                        />
+                                        /> */}
 
                                         {index === 0 ? 
                                         <></> 
@@ -582,7 +668,7 @@ const InvestorProfileForm: React.FC = () => {
                 </FormContentPanel>
             </div>
             <ProfileFormSidePanel
-                completionPercentage={0}
+                completionPercentage={investorProfile.completionPercentage}
                 sections={['introduction', 'investing info', 'sectors of interest', 'investing history', 'in the news', 'experience & education']} 
             />
         </form>
@@ -633,3 +719,85 @@ const DateInput = ({labelClassName, labelText, inputName, control, defaultValue,
         </div>
     )
 }
+
+const CREATE_INVESTOR_PROFILE = gql`
+  mutation CREATE_INVESTOR_PROFILE(
+        $title: String!
+        $role: String!
+        $minInvestment: String!
+        $sweetSpot: String!
+        $maxInvestment: String!
+        $sectorsOfInterest: [String]!
+        $investmentHistory: JSON!
+        $investmentStage: [String]!
+        $countriesOfInvestment: [String]!
+        $leadInvestor: String!
+        $investingAttributes: [String]!
+        $education: JSON!
+        $experience: JSON!
+        $mediaLink: [String]!
+        $user_id: ID!
+    )  {
+    createInvestorProfile (
+        title: $title
+        role: $role
+        minInvestment: $minInvestment
+        sweetSpot: $sweetSpot
+        maxInvestment: $maxInvestment
+        sectorsOfInterest: $sectorsOfInterest
+        investmentHistory: $investmentHistory
+        investmentStage: $investmentStage
+        countriesOfInvestment: $countriesOfInvestment
+        leadInvestor: $leadInvestor
+        investingAttributes: $investingAttributes
+        education: $education
+        experience: $experience
+        mediaLink: $mediaLink
+        user_id: $user_id
+    ) {
+        id
+    }
+  }
+`;
+
+const UPDATE_INVESTOR_PROFILE = gql`
+  mutation UPDATE_INVESTOR_PROFILE(
+        $id: ID!, 
+        $title: String!
+        $role: String!
+        $minInvestment: String!
+        $sweetSpot: String!
+        $maxInvestment: String!
+        $sectorsOfInterest: [String]!
+        $investmentHistory: JSON!
+        $investmentStage: [String]!
+        $countriesOfInvestment: [String]!
+        $leadInvestor: String!
+        $investingAttributes: [String]!
+        $education: JSON!
+        $experience: JSON!
+        $mediaLink: [String]!
+        $user_id: ID!
+    )  {
+    updateInvestorProfile (
+        id: $id, 
+        title: $title
+        role: $role
+        minInvestment: $minInvestment
+        sweetSpot: $sweetSpot
+        maxInvestment: $maxInvestment
+        sectorsOfInterest: $sectorsOfInterest
+        investmentHistory: $investmentHistory
+        investmentStage: $investmentStage
+        countriesOfInvestment: $countriesOfInvestment
+        leadInvestor: $leadInvestor
+        investingAttributes: $investingAttributes
+        education: $education
+        experience: $experience
+        mediaLink: $mediaLink
+        user_id: $user_id
+    ) {
+        id,
+    }
+  }
+`;

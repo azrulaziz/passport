@@ -80,7 +80,7 @@ const YearInput = forwardRef(
 
 const CompanyProfileForm = ({profileData}) => {
     const router = useRouter()
-    // const [yearFounded, setYearFounded] = useState();
+    
     const {register, control, formState: { errors }, watch , handleSubmit} = useForm<FormValues>({
         defaultValues: {
             companyName: profileData[0]?.companyName ? profileData[0].companyName : "",
