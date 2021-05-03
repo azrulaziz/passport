@@ -81,6 +81,7 @@ const PersonalInfoForm: React.FC<Props> = ({data: {User}}) => {
     const handleSubmitPersonalInfo: SubmitHandler<FormValues> = (formData) => {
         console.log(formData)
         formData.id = 1
+        formData.photo = ""
         mutate(formData)
     }
 
