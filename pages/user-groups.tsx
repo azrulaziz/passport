@@ -11,7 +11,7 @@ export default function UserGroups() {
       <Head>
         <title>{t('head-title')}</title>
       </Head>
-      <p className="">User groups wip</p>
+      <p className="">User groups wip </p>
     </Layout>
   )
 }
