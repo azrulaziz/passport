@@ -74,7 +74,6 @@ const UserGroupsTable = () => {
                 {headerGroups.map(headerGroup => (
                     <tr {...headerGroup.getHeaderGroupProps()} className="">
                         {headerGroup.headers.map(column => {
-                            console.log(column)
                             return (
                             <th {...column.getHeaderProps(column.getSortByToggleProps())} className={`${column.className} py-1 px-4 text-xs text-gray-8 font-normal text-left`}>
                                 <div className="flex items-center">
@@ -93,7 +92,6 @@ const UserGroupsTable = () => {
                     return (
                         <tr {...row.getRowProps()}>
                             {row.cells.map(cell => {
-                                console.log(cell)
                                 return (
                                     <td {...cell.getCellProps()} className={`${cell.column.colClassName} py-4 px-4 text-xs text-left border-b`}>
                                         {cell.render('Cell')}

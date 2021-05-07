@@ -305,7 +305,7 @@ const UserListTable = () => {
 
 export default UserListTable
 
-const IndeterminateCheckbox = React.forwardRef(
+const IndeterminateCheckbox = React.forwardRef<HTMLInputElement>(
     // @ts-ignore
     ({ indeterminate, ...rest }, ref) => {
       const defaultRef = React.useRef()

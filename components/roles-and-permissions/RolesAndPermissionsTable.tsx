@@ -54,7 +54,6 @@ const RolesAndPermissionsTable = () => {
             className: 'w-1/12',
             colClassName: 'text-gray-7',
             Cell: (props) => {
-                console.log(props)
                 if (props.cell.row.original.roles === 'admin' || props.cell.row.original.roles === 'member') return null
                 return (
                     <EllipsisOutlined className="cursor-pointer" />
@@ -107,7 +106,6 @@ const RolesAndPermissionsTable = () => {
                 {headerGroups.map(headerGroup => (
                     <tr {...headerGroup.getHeaderGroupProps()} className="">
                         {headerGroup.headers.map(column => {
-                            console.log(column)
                             return (
                             <th {...column.getHeaderProps(column.getSortByToggleProps())} className={`${column.className} py-1 px-4 text-xs text-gray-8 font-normal text-left`}>
                                 <div className="flex items-center">
@@ -126,7 +124,6 @@ const RolesAndPermissionsTable = () => {
                     return (
                         <tr {...row.getRowProps()}>
                             {row.cells.map(cell => {
-                                console.log(cell)
                                 return (
                                     <td {...cell.getCellProps()} className={`${cell.column.colClassName} py-4 px-4 text-xs text-left border-b`}>
                                         {cell.render('Cell')}
