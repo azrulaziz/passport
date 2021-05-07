@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { Collapse } from 'antd';
 import 'antd/lib/collapse/style/index.css';
 import {useState} from 'react'
+import {useHeaderTitle} from 'store/useHeaderTitle'
 
 interface SideMenuItemProps {
     title: string,
@@ -12,9 +13,10 @@ interface SideMenuItemProps {
 
 export const SideMenuItem: React.FC<SideMenuItemProps> = ({title, href, children}) => {
     const router = useRouter();
+    const setMobileSubmenu = useHeaderTitle(state => state.setMobileSubmenu)
     return (
         <Link href={href}>
-            <a className={router.pathname.split("?")[0].startsWith(href) ? "active-link " : "link"}>
+            <a onClick={() => setMobileSubmenu(false)} className={router.pathname.split("?")[0].startsWith(href) ? "active-link " : "link"}>
                 {children}
                 <span>{title}</span>
             </a>
@@ -24,9 +26,10 @@ export const SideMenuItem: React.FC<SideMenuItemProps> = ({title, href, children
 
 export const CollapsedSideMenuItem: React.FC<SideMenuItemProps> = ({title, href, children}) => {
     const router = useRouter();
+    const setMobileSubmenu = useHeaderTitle(state => state.setMobileSubmenu)
     return (
         <Link href={href}>
-            <a className={router.pathname.split("?")[0].startsWith(href) ? "collapsed-active-link px-10" : "collapsed-link px-10"}>
+            <a onClick={() => setMobileSubmenu(false)} className={router.pathname.split("?")[0].startsWith(href) ? "collapsed-active-link px-10" : "collapsed-link px-10"}>
                 {children}
                 <span>{title}</span>
             </a>

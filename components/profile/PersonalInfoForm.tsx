@@ -97,11 +97,11 @@ const PersonalInfoForm: React.FC<Props> = ({data: {User}}) => {
 
             <form className="flex flex-wrap justify-around px-6 -mx-2" onSubmit={handleSubmit(handleSubmitPersonalInfo)}>
 
-                <div className="w-1/3 px-1 flex justify-start">
+                <div className="md:w-1/3 px-1 flex justify-start mb-4">
                     <div className="w-48">
 
                         {uploadedPhoto ?
-                        <div className="border h-48 mb-2">
+                        <div className="border h-48 w-48 mb-2">
                             <img src={URL.createObjectURL(uploadedPhoto)} alt="" className="h-full w-full object-cover" />
                         </div>
                         :
@@ -123,15 +123,15 @@ const PersonalInfoForm: React.FC<Props> = ({data: {User}}) => {
                         />
                         
                         <p className="italic text-xs text-gray-7 mt-2">
-                            .jpg and .png files are allowed.
+                            Only .jpg and .png files are allowed.
                             Files should be no larger than 1mb.
                         </p>
                     </div>
                 </div>
 
                 <div className="w-full sm:w-2/3 px-2">
-                    <div className="flex space-x-4 mb-4">
-                        <div className="w-1/2 relative">
+                    <div className="flex flex-wrap space-y-4 xl:space-y-0 xl:flex-nowrap xl:space-x-4 mb-4">
+                        <div className="w-full xl:w-1/2 relative">
                                 <TextInput
                                     register={register}
                                     errors={errors}
@@ -145,7 +145,7 @@ const PersonalInfoForm: React.FC<Props> = ({data: {User}}) => {
                                     labelText={<span className="profile-form-label ">First Name / Given Name <span className="text-red-600">*</span></span>}
                                 />
                             </div>
-                            <div className="w-1/2 relative">
+                            <div className="w-full xl:w-1/2 relative">
                                 <TextInput
                                     register={register}
                                     errors={errors}
@@ -161,8 +161,8 @@ const PersonalInfoForm: React.FC<Props> = ({data: {User}}) => {
                         </div>
                     </div>
 
-                    <div className="flex space-x-4 my-6">
-                        <div className="w-1/2 relative">
+                    <div className="flex flex-wrap xl:flex-nowrap space-y-4 xl:space-y-0 xl:space-x-4 my-6">
+                        <div className="w-full xl:w-1/2 relative">
                                 <TextInput
                                     register={register}
                                     errors={errors}
@@ -176,7 +176,7 @@ const PersonalInfoForm: React.FC<Props> = ({data: {User}}) => {
                                     labelText="Suffix"
                                 />
                             </div>
-                            <div className="w-1/2 relative">
+                            <div className="w-full xl:w-1/2 relative">
                                 <TextInput
                                     register={register}
                                     errors={errors}

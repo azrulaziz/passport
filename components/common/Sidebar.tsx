@@ -5,7 +5,7 @@ import {SideMenuItem, SideMenuItemCollapse, CollapsedSideMenuItem} from "./SideM
 const Sidebar: React.FC = () => {
     
     return (
-        <aside className="fixed hidden md:block md:w-56 bg-white h-screen overflow-y-auto">
+        <aside className="fixed hidden lg:block lg:w-56 bg-white h-screen overflow-y-auto">
             <div className="relative border h-full py-2">
                 <div className="z-0 h-20">{/* empty div to offset sidebar from main header */}</div> 
 
@@ -26,17 +26,16 @@ const Sidebar: React.FC = () => {
                 </>
 
                 <div className="absolute bottom-0 border-t border-gray-4 w-full py-1 text-gray-6 text-xs px-4">
-                    <div className="flex space-x-2 my-4">
+                    <div className="flex space-x-2 my-4 cursor-pointer">
                         <BugOutlined  />
-                        <p>Report bug</p>
+                        <p>Report a bug</p>
                     </div>
-                    <div className="flex space-x-2 my-4">
+                    <div className="flex space-x-2 my-4 cursor-pointer">
                         <BulbOutlined />
                         <p>Suggest a feature</p>
                     </div>
                 </div>
             </div>
-            
         </aside>
     )
 }

@@ -1,14 +1,14 @@
 import React from "react"
-import Header from "./Header"
-import Meta from './Meta'
-import Sidebar from "./Sidebar"
-import MobileSidebar from "./MobileSidebar"
+import Header from "../common/Header"
+import Meta from '../common/Meta'
+import Sidebar from "../common/Sidebar"
+import MobileSidebar from "../common/MobileSidebar"
 
 interface Props {
     children: React.ReactNode
 }
 
-const Layout: React.FC<Props> = ({children}) => {
+const RoleLayout: React.FC<Props> = ({children}) => {
     
     return (
         <div className="">
@@ -19,7 +19,7 @@ const Layout: React.FC<Props> = ({children}) => {
                     <Sidebar /> 
                     <MobileSidebar />
                 </nav>
-                <div className="lg:ml-56 p-4 pt-0 w-full mt-16 md:mt-22">
+                <div className="lg:ml-56 p-4 pt-0 w-full mt-16 md:mt-22 overflow-x-hidden">
                     {children}
                 </div>
             </div>
@@ -27,4 +27,4 @@ const Layout: React.FC<Props> = ({children}) => {
     )
 }
 
-export default Layout
+export default RoleLayout

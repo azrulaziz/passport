@@ -86,9 +86,7 @@ const GET_PROFILE_DATA = gql`
 export default function Profile() {
   const { t } = useTranslation('profile')
   const setHeaderTitle = useHeaderTitle(state => state.setTitle)
-  
 
-  
   const fetchProfile = async () => {
     const data = await request(endpoint, GET_PROFILE_DATA);
     return data;

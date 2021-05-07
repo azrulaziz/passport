@@ -21,15 +21,15 @@ html, body {
     }
 
     .edit-profile-form {
-      @apply flex flex-wrap -mx-4 pb-10;
+      @apply flex flex-wrap flex-col-reverse md:flex-row -mx-4 pb-10 ;
     }
 
     .edit-profile-main {
-      @apply py-2 px-4 w-full lg:w-9/12 space-y-4 pb-60;
+      @apply py-2 px-4 w-full md:w-9/12 space-y-4 pb-60;
     }
 
     .edit-profile-side {
-      @apply py-2 px-4 w-full lg:w-3/12 ;
+      @apply py-1 px-4 w-full md:w-3/12 sticky top-12 md:top-20 bg-primary-gray;
     }
 
     .profile-form-label {

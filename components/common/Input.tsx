@@ -20,7 +20,7 @@ export const TextInput = ({register, errors, inputName, placeholder, type, valid
                 />
             {errors[inputName] && (
                 <span role="alert" className="absolute -bottom-4 text-xs text-red-500">{errors[inputName].message}</span>
-                )}
+            )}
         </div>
     )
 }
