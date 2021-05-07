@@ -3,6 +3,7 @@ import {BugOutlined, BulbOutlined, UserOutlined, SettingOutlined, BuildOutlined,
 import {SideMenuItem, SideMenuItemCollapse, CollapsedSideMenuItem} from "./SideMenuItem"
 import {useHeaderTitle} from 'store/useHeaderTitle'
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import Image from 'next/image'
 
 const MobileSidebar: React.FC = () => {
     const mobileSubmenu = useHeaderTitle(state => state.mobileSubmenu)
@@ -20,7 +21,7 @@ const MobileSidebar: React.FC = () => {
                 <aside className="fixed z-20 top-0 pt-14 lg:hidden md:w-56 bg-white h-screen overflow-y-auto ">
                     <div className="relative h-full py-2">
                         <div className="pb-2 ">
-                            <img src="/submenulogo.png" alt="Passport logo" className="" />
+                            <img src="/submenulogo.png" alt="Passport logo"  />
                         </div> 
                         <hr />
                         <>

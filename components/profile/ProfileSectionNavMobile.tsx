@@ -9,9 +9,9 @@ export const NavSectionScroll = ({sections}) => {
     const renderMenu = (sections) => {
         let menu = sections.map(each => {
             return (
-                <div key={each} className="cursor-pointer capitalize leading-7 w-52 sm:w-60 text-center py-2 " >
+                <div key={each} className="cursor-pointer capitalize leading-7 mx-4 text-center py-2 " style={{minWidth: '7rem'}}>
                     <Link
-                        activeClass="font-bold pb-1 text-primary-blue border-b-2 leading-7 border-primary-blue "
+                        activeClass="font-bold pb-1 text-primary-blue border-b-2 leading-7 border-primary-blue"
                         to={each}
                         spy={true}
                         smooth={true}
@@ -36,7 +36,7 @@ export const NavSectionScroll = ({sections}) => {
                 arrowLeft={ArrowLeft}
                 arrowRight={ArrowRight}
                 innerWrapperClass=""
-                wrapperClass=" mx-2 "
+                wrapperClass=" mx-2 w-full"
                 selected={selected}
                 scrollToSelected={true}
             />

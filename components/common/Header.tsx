@@ -36,9 +36,9 @@ const Header: React.FC = () => {
                             <div className="cursor-pointer relative">
                                 <div className="relative" onClick={() => handleSetNotificationTab()}>
                                     <NotificationOutlined />
-                                    {/* <div className="absolute top-2 -right-1">
+                                    <div className="absolute top-2 -right-1">
                                         <div className="w-2 h-2 rounded-full" style={{backgroundColor: "#fc1043"}}></div>
-                                    </div> */}
+                                    </div>
                                 </div>
                                 {notificationTabOpen ? <NotificationsBar /> : <></>}
                             </div>

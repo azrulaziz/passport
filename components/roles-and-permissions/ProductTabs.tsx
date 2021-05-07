@@ -5,7 +5,6 @@ import {useState} from 'react'
 
 const TabsItem = ({selected, name}) => {
     const router = useRouter()
-    console.log(selected)
     return (
         <a className={`${selected === name ? "border-b-4 pb-3 border-primary-blue text-primary-blue" : ""}`}>
             {name}
