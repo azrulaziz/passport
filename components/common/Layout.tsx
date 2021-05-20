@@ -15,7 +15,7 @@ const Layout: React.FC<Props> = ({children}) => {
             <Meta />
             <Header />
             <div className="flex">
-                <nav>
+                <nav aria-label="navigation">
                     <Sidebar /> 
                     <MobileSidebar />
                 </nav>

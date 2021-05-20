@@ -101,7 +101,7 @@ const RolesAndPermissionsTable = () => {
     } = tableInstance
     
     return (
-        <table {...getTableProps()} className=" w-full">
+        <table {...getTableProps()} className=" w-full my-2">
             <thead className="border-b bg-gray-2">
                 {headerGroups.map(headerGroup => (
                     <tr {...headerGroup.getHeaderGroupProps()} className="">

@@ -4,7 +4,7 @@ import { useState } from "react";
 import {ArrowLeft, ArrowRight} from "../common/HorizontalScrollArrow"
 
 export const NavSectionScroll = ({sections}) => {
-    const [selected, setSelected] = useState('introduction')
+    const [selected, setSelected] = useState('')
 
     const renderMenu = (sections) => {
         let menu = sections.map(each => {

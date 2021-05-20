@@ -4,7 +4,7 @@ const items = ['Notifications', 'Activity', 'Requests']
 
 const TabMenu = ({selected, setSelectedTab}) => {
     return (
-        <div className="flex border-b text-base px-2 pt-2 sticky top-0 mt-0  bg-white">
+        <div className="flex border-b dark:border-secondary-gray text-base px-2 pt-2 sticky top-0 mt-0 section-bg">
             {items.map(each => {
                 return (
                     <div 

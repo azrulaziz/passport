@@ -21,7 +21,7 @@ const ProfileFormSidePanel: React.FC<Props> = ({sections, completionPercentage})
                 <NavSectionScroll sections={sections}/>
                 <PrimaryButton type="submit" extraStyle="hidden md:block">Save Profile</PrimaryButton>
             </div>
-            <div className="fixed bottom-0 right-0 pb-2 pt-1 bg-primary-gray w-full md:hidden px-4 ">
+            <div className="fixed bottom-0 right-0 pb-2 pt-1 bg-primary-gray dark:bg-primary-black w-full md:hidden px-4 ">
                 <div className="flex justify-between items-end">
                     <ProfileCompletion completionPercentage={completionPercentage} />
                     <PrimaryButton type="submit" extraStyle="md:hidden py-1">Save Profile</PrimaryButton>

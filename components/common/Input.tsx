@@ -3,6 +3,7 @@ import {EyeOutlined, EyeInvisibleOutlined, PlusOutlined, CloseOutlined} from '@a
 import {Controller} from "react-hook-form";
 import AsyncSelect from 'react-select/async';
 import Select from "react-select";
+import {useTheme} from 'next-themes'
 
 export const TextInput = ({register, errors, inputName, placeholder, type, validation, labelClassName, labelText}) => {
     
@@ -17,7 +18,7 @@ export const TextInput = ({register, errors, inputName, placeholder, type, valid
                 aria-placeholder={inputName}
                 placeholder={placeholder}
                 type={type}
-                />
+            />
             {errors[inputName] && (
                 <span role="alert" className="absolute -bottom-4 text-xs text-red-500">{errors[inputName].message}</span>
             )}
@@ -47,6 +48,35 @@ export const TextInputInline = ({register, errors, inputName, placeholder, type,
                 {errors?.[fieldGroup]?.[index]?.[fieldName]?.message && (
                 <span role="alert" className="absolute mt-1 text-xs text-red-500">{errors?.[fieldGroup]?.[index]?.[fieldName]?.message}</span>
                 )}
+            </div>
+        </div>
+    )
+}
+
+export const TextInputInlineWithIcon = ({register, errors, inputName, type, validation, labelClassName, labelText, fieldName = null, fieldGroup = null, index = null, ...props}) => {
+    
+    return (
+        <div className="flex items-center space-x-1">
+            <label htmlFor={inputName} className={`${labelClassName} w-1/3`}>{labelText}</label>
+            <div className="flex relative w-full">
+                <span className="absolute left-2 transform py-1 text-gray-5 cursor-pointer text-lg">$</span> 
+                <div className="w-full">
+                    <input
+                        id={inputName}
+                        aria-invalid={errors[inputName] ? "true" : "false"}
+                        {...register(inputName, validation)}
+                        className="border border-gray-5 pl-5 py-2 px-2 w-full block rounded text-sm"
+                        aria-placeholder={inputName}
+                        type={type}
+                        {...props}
+                    />
+                    {errors[inputName] && (
+                    <span role="alert" className="absolute mt-1 text-xs text-red-500">{errors[inputName].message}</span>
+                    )}
+                    {errors?.[fieldGroup]?.[index]?.[fieldName]?.message && (
+                    <span role="alert" className="absolute mt-1 text-xs text-red-500">{errors?.[fieldGroup]?.[index]?.[fieldName]?.message}</span>
+                    )}
+                </div>
             </div>
         </div>
     )
@@ -140,9 +170,10 @@ export const PasswordInput = ({register, errors, inputName, placeholder, validat
     )
 }
 
-export const SelectInput = ({inputName, labelText, labelClassName, control, optionsArray, placeholder, inputStyle = null}) => {
+export const SelectInput = ({inputName, labelText, labelClassName, control, optionsArray, placeholder, parentClassName = '', inputStyle = null}) => {
+    const {theme, setTheme} = useTheme()
     return (
-        <div className="">
+        <div className={parentClassName}>
             <label htmlFor={inputName} className={`${labelClassName}`}>{labelText}</label>
             <div className="w-full">
                 <Controller
@@ -152,9 +183,35 @@ export const SelectInput = ({inputName, labelText, labelClassName, control, opti
                         <Select 
                             inputId={inputName}
                             {...field} 
-                            className={`${inputStyle} w-40 `}
+                            className={`${inputStyle} w-40 text-sm`}
                             options={optionsArray} 
                             placeholder={placeholder}
+                            classNamePrefix="react-select"
+                            styles={{
+                                control: styles => ({ 
+                                    ...styles, 
+                                    backgroundColor: `${theme === 'dark' ? '#3B3B3B' : '#fff' }`,
+                                    transition: 'none',
+                                }),
+                                menu: styles => ({ 
+                                    ...styles, 
+                                    backgroundColor: `${theme === 'dark' ? '#3B3B3B' : '#fff' }`,
+                                }),
+                                input: styles => ({
+                                    ...styles,
+                                    color: `${theme === 'dark' ? '#fff' : '#3B3B3Bf' }`
+                                }),
+                                singleValue: styles => ({
+                                    ...styles,
+                                    color: `${theme === 'dark' ? '#fff' : '#3B3B3Bf' }`
+                                }),
+                                option: base => ({
+                                    ...base,
+                                    "&:hover": {
+                                      backgroundColor: 'lightgray'
+                                    }
+                                })
+                            }}
                         />
                     }
                 />
@@ -164,7 +221,7 @@ export const SelectInput = ({inputName, labelText, labelClassName, control, opti
 }
 
 export const AsyncMultiSelectionInput = ({inputName, id = inputName, control, labelText, labelClassName, optionsArray, listHook, subLabel, placeholder}) => {
-
+    const {theme, setTheme} = useTheme()
     const promiseOptions = (fn) =>
         new Promise(resolve => {
             setTimeout(() => {
@@ -184,12 +241,34 @@ export const AsyncMultiSelectionInput = ({inputName, id = inputName, control, la
                         inputId={id}
                         aria-label={labelText}
                         {...field} 
-                        className="w-full pt-2"
+                        className="w-full pt-2 text-white text-sm"
                         loadOptions={(e) => promiseOptions(optionsArray.filter(i =>
                             i.label.toLowerCase().includes(e.toLowerCase())
                         ))}
                         placeholder={placeholder}
                         onChange={(value) => listHook.handleAddValue(value)}
+                        classNamePrefix="react-select"
+                        styles={{
+                            control: styles => ({ 
+                                ...styles, 
+                                backgroundColor: `${theme === 'dark' ? '#3B3B3B' : '#fff' }`,
+                                transition: 'none'
+                            }),
+                            menu: styles => ({ 
+                                ...styles, 
+                                backgroundColor: `${theme === 'dark' ? '#3B3B3B' : '#fff' }`,
+                            }),
+                            input: styles => ({
+                                ...styles,
+                                color: `${theme === 'dark' ? '#fff' : '#3B3B3Bf' }`
+                            }),
+                            option: base => ({
+                                ...base,
+                                "&:hover": {
+                                  backgroundColor: 'lightgray'
+                                }
+                            })
+                        }}
                     />
                 }
             />
@@ -197,8 +276,8 @@ export const AsyncMultiSelectionInput = ({inputName, id = inputName, control, la
             <div className="my-2 space-x-1">
                 {listHook.list.map(each => {
                     return (
-                        <div key={each.label} className="bg-gray-2 border-2 border-gray-5 inline-block rounded py-1 px-2">
-                            <p className="text-xs text-gray-10 flex items-center">
+                        <div key={each.label} className="bg-gray-2 dark:bg-gray-8 border-2 border-gray-5 inline-block rounded py-1 px-2">
+                            <p className="text-xs flex items-center">
                                 {each.value} 
                                 <CloseOutlined className="pl-1 text-gray-7 cursor-pointer" onClick={() => listHook.handleRemoveValue(each)} />
                             </p>
@@ -210,8 +289,11 @@ export const AsyncMultiSelectionInput = ({inputName, id = inputName, control, la
                 <p className="pb-1 text-xs text-gray-7">Popular</p>
                 <div className="space-x-2">
                     {optionsArray.map(each => {
+                        if (listHook.list.some(selected => selected.value === each.value)) {
+                            return null
+                        }
                         return (
-                            <div key={each.label} className=" border-2 border-dashed border-gray-5 inline-block rounded py-1 px-2 cursor-pointer" onClick={() => listHook.handleAddValue(each)}>
+                            <div key={each.label} className=" border-2 border-dashed border-gray-5 dark:border-gray-8 inline-block rounded py-1 px-2 cursor-pointer" onClick={() => listHook.handleAddValue(each)}>
                                 <p className="text-xs text-gray-7 flex items-center">
                                     <PlusOutlined className="pr-1 text-gray-7"  />
                                     {each.value} 
@@ -225,8 +307,8 @@ export const AsyncMultiSelectionInput = ({inputName, id = inputName, control, la
     )
 }
 
-export const AsyncMultiSelectInsideInput = ({inputName, id = inputName, control, labelText, labelClassName, optionsArray, placeholder}) => {
-
+export const AsyncMultiSelectInsideInput = ({inputName, id = inputName, control, labelText, labelClassName, optionsArray, placeholder, rules = null, ...props}) => {
+    const {theme, setTheme} = useTheme()
     const promiseOptions = (fn) =>
         new Promise(resolve => {
             setTimeout(() => {
@@ -241,20 +323,49 @@ export const AsyncMultiSelectInsideInput = ({inputName, id = inputName, control,
                 <Controller
                     name={inputName}
                     control={control}
-                    render={({ field }) => 
+                    rules={rules}
+                    render={({ field, fieldState: {error} }) => 
+                    <div>
                         <AsyncSelect 
                             inputId={id}
                             aria-label={labelText}
                             {...field} 
-                            className="w-full"
+                            className="w-full text-sm"
                             loadOptions={(e) => promiseOptions(optionsArray.filter(i =>
                                 i.label.toLowerCase().includes(e.toLowerCase())
                             ))}
+                            {...props}
                             placeholder={placeholder}
                             isMulti
+                            classNamePrefix="react-select"
+                            styles={{
+                                control: styles => ({ 
+                                    ...styles, 
+                                    backgroundColor: `${theme === 'dark' ? '#3B3B3B' : '#fff' }`,
+                                    transition: 'none'
+                                }),
+                                menu: styles => ({ 
+                                    ...styles, 
+                                    backgroundColor: `${theme === 'dark' ? '#3B3B3B' : '#fff' }`,
+                                }),
+                                input: styles => ({
+                                    ...styles,
+                                    color: `${theme === 'dark' ? '#fff' : '#3B3B3Bf' }`
+                                }),
+                                option: base => ({
+                                    ...base,
+                                    "&:hover": {
+                                      backgroundColor: 'lightgray'
+                                    }
+                                })
+                            }}
                         />
+                        {error && (
+                            <span role="alert" className="absolute py-1 text-xs text-red-500">{error.message}</span>
+                        )}
+                    </div>
                     }
-                />
+                    />
             </div>
         </div>
     )

@@ -3,7 +3,7 @@ import {PrimaryButton} from 'components/common/Button'
 import { useRouter } from 'next/router'
 import Link from "next/link";
 
-const ProfileMenu = ({data}) => {
+const ProfileMenuVisitorMode = ({data}) => {
     const router = useRouter()
     if (data?.User?.UserProfiles?.length < 1) {
         return (
@@ -15,14 +15,14 @@ const ProfileMenu = ({data}) => {
     } 
     return (
         <div className="flex px-5 space-x-6">
-            <Link href="/profile">
-                <a className={router.pathname === "/profile" ? "border-b-4 border-primary-blue text-primary-blue font-bold py-4 " : "py-4"}>
+            <Link href="/profile/visitor-mode/">
+                <a className={router.pathname === "/profile/visitor-mode" ? "border-b-4 border-primary-blue text-primary-blue font-bold py-4 " : "py-4"}>
                     User Profile
                 </a>
             </Link>
             {data?.User?.CompanyProfiles?.length > 0 ?
-            <Link href="/profile/company-profile">
-                <a className={router.pathname === "/profile/company-profile" ? "border-b-4 border-primary-blue text-primary-blue font-bold py-4 " : "py-4"}>
+            <Link href="/profile/visitor-mode/company-profile">
+                <a className={router.pathname === "/profile/visitor-mode/company-profile" ? "border-b-4 border-primary-blue text-primary-blue font-bold py-4 " : "py-4"}>
                     Company Profile
                 </a>
             </Link>
@@ -30,8 +30,8 @@ const ProfileMenu = ({data}) => {
             <></>
             }
             {data?.User?.MentorProfiles?.length > 0 ?
-            <Link href="/profile/mentor-profile">
-                <a className={router.pathname === "/profile/mentor-profile" ? "border-b-4 border-primary-blue text-primary-blue font-bold py-4 " : "py-4"}>
+            <Link href="/profile/visitor-mode/mentor-profile">
+                <a className={router.pathname === "/profile/visitor-mode/mentor-profile" ? "border-b-4 border-primary-blue text-primary-blue font-bold py-4 " : "py-4"}>
                     Mentor Profile
                 </a>
             </Link>
@@ -39,8 +39,8 @@ const ProfileMenu = ({data}) => {
             <></>
             }
             {data?.User?.InvestorProfiles?.length > 0 ?
-            <Link href="/profile/investor-profile">
-                <a className={router.pathname === "/profile/investor-profile" ? "border-b-4 border-primary-blue text-primary-blue font-bold py-4 " : "py-4"}>
+            <Link href="/profile/visitor-mode/investor-profile">
+                <a className={router.pathname === "/profile/visitor-mode/investor-profile" ? "border-b-4 border-primary-blue text-primary-blue font-bold py-4 " : "py-4"}>
                     Investor Profile
                 </a>
             </Link>
@@ -51,5 +51,5 @@ const ProfileMenu = ({data}) => {
     )
 }
 
-export default ProfileMenu
+export default ProfileMenuVisitorMode
 

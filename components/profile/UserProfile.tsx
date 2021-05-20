@@ -3,7 +3,7 @@ import useSectionCompletion from 'lib/useSectionCompletion'
 import SectionCompletion from './SectionCompletion'
 import SectionPanel from './SectionPanel'
 
-const UserProfile = ({profile}) => {
+const UserProfile = ({profile, visitorMode = null}) => {
     
     if (profile && profile.length < 1) {
         return (
@@ -14,16 +14,18 @@ const UserProfile = ({profile}) => {
 
     return (
         <div className="space-y-4">
-            <SectionCompletion profileName="user" section={userProfile.incompleteSection} editProfileLink="/profile/edit-user-profile" />
-
+            {visitorMode ?
+            <></>
+            :
+            <SectionCompletion profileName="user" section={userProfile.incompleteSection} editProfileLink="/profile/edit-user-profile" visitorModeLink="/profile/visitor-mode" />
+            }
             {profile[0]?.summary ?
             <SectionPanel panelTitle="Summary" icon={<AlignLeftOutlined />}>
-                <p className="text-sm text-gray-10">{profile[0]?.summary}</p>
+                <p className="text-sm ">{profile[0]?.summary}</p>
             </SectionPanel>
             :
             <></>
             }
-
             {profile[0]?.skills.length > 0 ||  profile[0]?.tools.length > 0 ?
             <SectionPanel panelTitle="Skills" icon={<ExperimentOutlined />} >
                 <Skills skills={profile[0]?.skills} />
@@ -32,7 +34,6 @@ const UserProfile = ({profile}) => {
             :
             <></>
             }
-
             {profile[0]?.interest.length > 0 ?
             <SectionPanel panelTitle="Interests" icon={<BlockOutlined />}>
                 <Interests interest={profile[0]?.interest} />
@@ -40,7 +41,6 @@ const UserProfile = ({profile}) => {
             :
             <></>
             }
-
         </div>
     )
 }
@@ -52,11 +52,11 @@ const Skills = ({skills}) => {
     
     return (
         <div className="space-y-1">
-            <p className="text-sm text-gray-10 font-semibold">Industry Knowledge</p>
+            <p className="text-sm font-semibold">Industry Knowledge</p>
             <div className="flex flex-wrap items-start">
                 {skills.map(each => {
                     return (
-                        <p className="my-2 text-sm text-gray-10 w-1/2 self-start align-center" key={each}>{each}</p>
+                        <p className="my-2 text-sm w-1/2 self-start align-center" key={each}>{each}</p>
                     )
                 })}
             </div>
@@ -72,7 +72,7 @@ const Interests = ({interest}) => {
             <div className="flex flex-wrap items-start">
                 {interest.map(each => {
                     return (
-                        <p className="my-2 text-sm text-gray-10 w-1/2 self-start align-center" key={each}>{each}</p>
+                        <p className="my-2 text-sm w-1/2 self-start align-center" key={each}>{each}</p>
                     )
                 })}
             </div>
@@ -85,11 +85,11 @@ const Tools = ({tools}) => {
     
     return (
         <div className="space-y-1">
-            <p className="text-sm text-gray-10 font-semibold">Tools & Technology</p>
+            <p className="text-sm font-semibold">Tools & Technology</p>
             <div className="flex flex-wrap items-start">
                 {tools.map(each => {
                     return (
-                        <p className="my-2 text-sm text-gray-10 w-1/2 self-start align-center" key={each}>{each}</p>
+                        <p className="my-2 text-sm w-1/2 self-start align-center" key={each}>{each}</p>
                     )
                 })}
             </div>

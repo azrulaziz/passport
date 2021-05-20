@@ -1,9 +1,9 @@
 import React from "react"
-import {BugOutlined, BulbOutlined, UserOutlined, SettingOutlined, BuildOutlined, MenuOutlined, CloseOutlined} from '@ant-design/icons'
+import {UserOutlined, SettingOutlined, BuildOutlined, MenuOutlined, CloseOutlined} from '@ant-design/icons'
 import {SideMenuItem, SideMenuItemCollapse, CollapsedSideMenuItem} from "./SideMenuItem"
 import {useHeaderTitle} from 'store/useHeaderTitle'
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import Image from 'next/image'
+import SidebarFooterMenu from "./SidebarFooterMenu";
 
 const MobileSidebar: React.FC = () => {
     const mobileSubmenu = useHeaderTitle(state => state.mobileSubmenu)
@@ -18,7 +18,7 @@ const MobileSidebar: React.FC = () => {
         {mobileSubmenu ?
             <div className="">
                 <CloseOutlined className="fixed block lg:hidden top-5 left-5 text-white cursor-pointer z-50" onClick={() => setMobileSubmenu(false)} />
-                <aside className="fixed z-20 top-0 pt-14 lg:hidden md:w-56 bg-white h-screen overflow-y-auto ">
+                <aside className="fixed z-20 top-0 pt-14 lg:hidden md:w-56 bg-white dark:bg-gray-10 h-screen overflow-y-auto ">
                     <div className="relative h-full py-2">
                         <div className="pb-2 ">
                             <img src="/submenulogo.png" alt="Passport logo"  />
@@ -39,16 +39,7 @@ const MobileSidebar: React.FC = () => {
                                 </>
                             </SideMenuItemCollapse>
                         </>
-                        <div className="absolute bottom-0 border-t border-gray-4 w-full py-1 text-gray-6 text-xs px-4">
-                            <div className="flex space-x-2 my-4">
-                                <BugOutlined  />
-                                <p>Report a bug</p>
-                            </div>
-                            <div className="flex space-x-2 my-4">
-                                <BulbOutlined />
-                                <p>Suggest a feature</p>
-                            </div>
-                        </div>
+                        <SidebarFooterMenu />
                     </div>
                 </aside>
             </div>

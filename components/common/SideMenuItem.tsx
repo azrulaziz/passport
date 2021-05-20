@@ -16,7 +16,7 @@ export const SideMenuItem: React.FC<SideMenuItemProps> = ({title, href, children
     const setMobileSubmenu = useHeaderTitle(state => state.setMobileSubmenu)
     return (
         <Link href={href}>
-            <a onClick={() => setMobileSubmenu(false)} className={router.pathname.split("?")[0].startsWith(href) ? "active-link " : "link"}>
+            <a onClick={() => setMobileSubmenu(false)} className={`flex items-center ${router.pathname.split("?")[0].startsWith(href) ? "active-link " : "link"}`}>
                 {children}
                 <span>{title}</span>
             </a>
@@ -55,7 +55,7 @@ export const SideMenuItemCollapse: React.FC<SideMenuItemCollapseProps> = ({title
     // @ts-ignore
     if (children.props.children.some(x => x.props.href === router.pathname)) {
         return (
-            <div className="">
+            <div className="dark:text-gray-1">
                 <Collapse ghost bordered={false} expandIconPosition="right" activeKey={toggle} onChange={(e) => handleChange(e)}>
                     <Panel key={1} header={<HeaderItem title={title} icon={icon} />} className="px-0">
                         {children}
@@ -65,8 +65,8 @@ export const SideMenuItemCollapse: React.FC<SideMenuItemCollapseProps> = ({title
         )
     }
     return (
-        <div className="">
-            <Collapse ghost bordered={false} expandIconPosition="right"  onChange={(e) => handleChange(e)}>
+        <div className="dark:text-gray-1">
+            <Collapse ghost bordered={false} expandIconPosition="right"  onChange={(e) => handleChange(e)} >
                 <Panel key={1} header={<HeaderItem title={title} icon={icon} />} className="px-0">
                     {children}
                 </Panel>
@@ -77,7 +77,7 @@ export const SideMenuItemCollapse: React.FC<SideMenuItemCollapseProps> = ({title
 
 const HeaderItem = ({title, icon}) => {
     return (
-        <div className="flex items-center text-xs space-x-2 transform translate-y-1">
+        <div className="flex items-center text-xs space-x-2 transform translate-y-1 dark:text-gray-1">
             {icon}
             <span>{title}</span>
         </div>

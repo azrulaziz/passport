@@ -1,7 +1,7 @@
 import {useForm, Controller} from "react-hook-form";
 import React from 'react'
 import FormContentPanel from './FormContentPanel';
-import { TextInput, TextInputInline, InputRadio, AsyncMultiSelectionInput } from 'components/common/Input';
+import { TextInput, TextInputInline, InputRadio, AsyncMultiSelectionInput, SelectInput } from 'components/common/Input';
 import Select from "react-select";
 import useList from 'lib/useList'
 import useCompletionStatus from 'lib/useCompletionStatus'
@@ -43,7 +43,7 @@ const MentorProfileForm = ({profileData}) => {
     const {register, control, formState: { errors }, watch , handleSubmit} = useForm<FormValues>({
         defaultValues: {
             summary: profileData[0]?.summary ? profileData[0].summary : "",
-            region: profileData[0]?.region ? buildObjectValueForReactSelect(profileData[0].region) : {},
+            region: profileData[0]?.region ? buildObjectValueForReactSelect(profileData[0].region) : null,
             languages: profileData[0]?.languages ? profileData[0].languages : "",
             remote: profileData[0]?.remote ? profileData[0].remote : "",
             familiarSector: [],
@@ -57,7 +57,7 @@ const MentorProfileForm = ({profileData}) => {
     
     const mentorProfile = useCompletionStatus({
         summary: watchAllFields.summary,
-        region: watchAllFields.region.value,
+        region: watchAllFields.region ? watchAllFields.region.value: watchAllFields.region,
         languages: watchAllFields.languages,
         remote: watchAllFields.remote,
         familiarSector: familiarSector.list.length,
@@ -95,7 +95,7 @@ const MentorProfileForm = ({profileData}) => {
         const updateProfileData = {
             id: profileData[0]?.id || null,
             summary: data.summary,
-            region: getStringValueFromReactSelect(data.region) || "",
+            region: getStringValueFromReactSelect(data.region),
             languages: data.languages,
             remote: data.remote,
             familiarSector: getArrayOfValueFromReactSelect(familiarSector.list),
@@ -128,24 +128,16 @@ const MentorProfileForm = ({profileData}) => {
                     </div>
                     <hr className="my-8"/>
                     <div className="space-y-6">
-                        <div className="flex items-center">
-                            <label htmlFor="region" className="profile-form-label w-1/3">Region:</label>
-                            <div className="w-full">
-                                <Controller
-                                    name="region"
-                                    control={control}
-                                    render={({ field }) => 
-                                        <Select 
-                                            inputId="region"
-                                            {...field} 
-                                            className="w-40 "
-                                            options={regionList} 
-                                            placeholder="Please Select"
-                                        />
-                                    }
-                                />
-                            </div>
-                        </div>
+                        <SelectInput 
+                            parentClassName="flex items-center"
+                            inputName="region"
+                            labelClassName="profile-form-label w-1/3"
+                            labelText="Region:"
+                            control={control}
+                            placeholder="Please Select"
+                            optionsArray={regionList}
+                            inputStyle="w-40"
+                        />
                         <TextInputInline
                             register={register}
                             errors={errors}

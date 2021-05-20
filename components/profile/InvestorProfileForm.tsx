@@ -1,20 +1,19 @@
 import {useForm, Controller, useFieldArray, useWatch} from "react-hook-form";
 import React, {useState, forwardRef} from 'react'
 import FormContentPanel from './FormContentPanel';
-import { TextInput, TextInputInline, InputRadio, AsyncMultiSelectionInput, AsyncMultiSelectInsideInput, SelectInput, InputCheckbox } from 'components/common/Input';
+import { TextInput, TextInputInline, InputRadio, AsyncMultiSelectionInput, AsyncMultiSelectInsideInput, SelectInput, InputCheckbox, TextInputInlineWithIcon } from 'components/common/Input';
 import Select from "react-select";
 import useList from 'lib/useList'
 import ProfileFormSidePanel from "./ProfileFormSidePanel";
 import {DownOutlined, CloseOutlined} from '@ant-design/icons'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { PrimaryButton } from "components/common/Button";
+import { PrimaryButton, PrimaryTransparentButton } from "components/common/Button";
 import MediaCard from "./MediaCard";
-
 import {useMutation, useQueryClient} from "react-query";
 import { request, gql } from "graphql-request";
 import {useRouter} from 'next/router'
-import {buildArrayValueForReactSelect, buildObjectValueForReactSelect, getArrayOfValueFromReactSelect, getStringValueFromReactSelect} from 'lib/utils'
+import {buildArrayValueForReactSelect, buildObjectValueForReactSelect, getArrayOfValueFromReactSelect, getStringValueFromReactSelect, checkFieldArrayCompletion} from 'lib/utils'
 import {endpoint} from 'config'
 import useCompletionStatus from 'lib/useCompletionStatus'
 
@@ -112,7 +111,7 @@ const InvestorProfileForm = ({profileData}) => {
             }],
             investmentStage: profileData[0]?.investmentStage?.length > 0 ? buildArrayValueForReactSelect(profileData[0]?.investmentStage) : [],
             countriesOfInvestment: profileData[0]?.countriesOfInvestment?.length > 0 ? buildArrayValueForReactSelect(profileData[0]?.countriesOfInvestment) : [],
-            leadInvestor: profileData[0]?.leadInvestor ? buildObjectValueForReactSelect(profileData[0].leadInvestor) : {},
+            leadInvestor: profileData[0]?.leadInvestor ? buildObjectValueForReactSelect(profileData[0].leadInvestor) : null,
             investingAttributes: profileData[0]?.investingAttributes?.length > 0 ? profileData[0]?.investingAttributes : [],
             education: profileData[0]?.education?.length > 0 ? profileData[0]?.education : [{
                 school: "",
@@ -135,15 +134,6 @@ const InvestorProfileForm = ({profileData}) => {
     const sectorsOfInterest = useList(profileData[0]?.sectorsOfInterest?.length > 0 ? buildArrayValueForReactSelect(profileData[0].sectorsOfInterest) : [], 10)
     const mediaLinks = useList(profileData[0]?.mediaLink?.length > 0 ? profileData[0]?.mediaLink : [])
 
-    const checkFieldArrayCompletion = (arr): boolean => {
-        for (let i in arr[0]) {
-            if (arr[0][i]) {
-                return true
-            }
-            return false
-        }
-    }
-
     const investorProfile = useCompletionStatus({
         title: watchAllFields.title,
         role: watchAllFields.role,
@@ -154,7 +144,7 @@ const InvestorProfileForm = ({profileData}) => {
         investmentHistory: checkFieldArrayCompletion(watchAllFields.investmentHistory),
         investmentStage: watchAllFields.investmentStage.length,
         countriesOfInvestment: watchAllFields.countriesOfInvestment.length,
-        leadInvestor: watchAllFields.leadInvestor.value,
+        leadInvestor: watchAllFields.leadInvestor ? watchAllFields.leadInvestor.value : watchAllFields.leadInvestor,
         investingAttributes: watchAllFields.investingAttributes.length,
         // education: checkFieldArrayCompletion(watchAllFields.education),
         // experience: checkFieldArrayCompletion(watchAllFields.experience),
@@ -262,7 +252,7 @@ const InvestorProfileForm = ({profileData}) => {
             investmentHistory: data.investmentHistory,
             investmentStage: getArrayOfValueFromReactSelect(data.investmentStage),
             countriesOfInvestment: getArrayOfValueFromReactSelect(data.countriesOfInvestment),
-            leadInvestor: getStringValueFromReactSelect(data.leadInvestor) || "",
+            leadInvestor: getStringValueFromReactSelect(data.leadInvestor),
             investingAttributes: data.investingAttributes,
             education: data.education,
             experience: data.experience,
@@ -303,11 +293,11 @@ const InvestorProfileForm = ({profileData}) => {
                 </FormContentPanel>
                 <FormContentPanel id="investing info" title="Investing Info" subtitle="How much are you willing to spend, and your investing traits.">
                     <div className="space-y-6">
-                        <TextInputInline
+                        <TextInputInlineWithIcon
                             register={register}
                             errors={errors}
                             inputName="minInvestment"
-                            placeholder="$"
+                            // placeholder="$"
                             type="text"
                             validation={{
                                 pattern: {
@@ -318,11 +308,11 @@ const InvestorProfileForm = ({profileData}) => {
                             labelClassName="profile-form-label"
                             labelText="Minimum Investment:"
                         />
-                        <TextInputInline
+                        <TextInputInlineWithIcon
                             register={register}
                             errors={errors}
                             inputName="sweetSpot"
-                            placeholder="$"
+                            // placeholder="$"
                             type="text"
                             validation={{
                                 pattern: {
@@ -333,11 +323,11 @@ const InvestorProfileForm = ({profileData}) => {
                             labelClassName="profile-form-label"
                             labelText="Sweet Spot:"
                         />
-                        <TextInputInline
+                        <TextInputInlineWithIcon
                             register={register}
                             errors={errors}
                             inputName="maxInvestment"
-                            placeholder="$"
+                            // placeholder="$"
                             type="text"
                             validation={{
                                 pattern: {
@@ -538,134 +528,144 @@ const InvestorProfileForm = ({profileData}) => {
                         </div>
                     </div>
                 </FormContentPanel>
-                <FormContentPanel id="experience & education" title="Experience & Education" subtitle="Include your education history and any previous experience here.">
-                    <div className="space-y-6">
-                        <div className="space-y-6">
-                            {educationFields.map((field, index) => {
-                                return (
-                                    <div key={field.id} className="space-y-6">
-                                        <TextInputInline
-                                            register={register}
-                                            errors={errors}
-                                            inputName={`education.${index}.school`}
-                                            placeholder="Enter school here"
-                                            type="text"
-                                            validation={{}}
-                                            labelClassName="profile-form-label"
-                                            labelText="School:"
-                                            defaultValue={field.school}
-                                        />
 
-                                        <TextInputInline
-                                            register={register}
-                                            errors={errors}
-                                            inputName={`education.${index}.degree`}
-                                            placeholder="Enter degree here"
-                                            type="text"
-                                            validation={{}}
-                                            labelClassName="profile-form-label"
-                                            labelText="Degree:"
-                                            defaultValue={field.degree}
-                                        />
-                                        <TextInputInline
-                                            register={register}
-                                            errors={errors}
-                                            inputName={`education.${index}.field`}
-                                            placeholder="Technology"
-                                            type="text"
-                                            validation={{}}
-                                            labelClassName="profile-form-label"
-                                            labelText="Field of Study:"
-                                            defaultValue={field.field}
-                                        />
-                                        {index === 0 ? 
-                                        <></> 
-                                        : 
-                                        <div className="flex justify-end">
-                                            <button className="border flex items-center text-red-400 text-xs border-red-400 px-1 rounded" onClick={() => educationRemove(index)}><CloseOutlined /> Remove</button> 
-                                        </div>
-                                        }
-                                        {index === educationFields.length - 1 ? <></> : <hr className="my-6 mx-8"/> }
-                                    </div>
-                                )
-                            })}
+                <div className="section-bg p-6 pb-10" id="experience & education">
+                    <div className="flex justify-between items-end flex-wrap">
+                        <div>
+                            <h1 className="main-title">Experience & Education</h1>
+                            <p className="sub-title">Include your education history and any previous experience here.</p>
                         </div>
-                        <div className="flex justify-end">
-                            <button className="border border-gray-5 border-dashed text-gray-7 py-2 px-4 text-sm" type="button" onClick={() => handleAddEducationHistory()}>+ Add education</button>
-                        </div>
-                        <hr className="my-8"/>
-                        <div className="space-y-6">
-                            {experienceFields.map((field, index) => {
-                                return (
-                                    <div key={field.id} className="space-y-6">
-                                        <TextInputInline
-                                            register={register}
-                                            errors={errors}
-                                            inputName={`experience.${index}.company`}
-                                            placeholder="Enter company here"
-                                            type="text"
-                                            validation={{}}
-                                            labelClassName="profile-form-label"
-                                            labelText="Company:"
-                                            defaultValue={field.company}
-                                        />
-
-                                        <TextInputInline
-                                            register={register}
-                                            errors={errors}
-                                            inputName={`experience.${index}.position`}
-                                            placeholder="Enter position here"
-                                            type="text"
-                                            validation={{}}
-                                            labelClassName="profile-form-label"
-                                            labelText="Position:"
-                                            defaultValue={field.position}
-                                        />
-                                        {/* <DateInput 
-                                            labelText="Start Date:"
-                                            labelClassName="profile-form-label w-1/3"
-                                            inputName={`experience.${index}.startDate`}
-                                            control={control}
-                                            defaultValue={field.startDate}
-                                            placeholderText="MM/YYYY"
-                                            dateFormat="MM/yyyy"
-                                            showMonthYearPicker
-                                            index={index}
-                                            inputGroup="experience"
-                                            fieldName="startDate"
-                                        />
-                                        <DateInput 
-                                            labelText="End Date:"
-                                            labelClassName="profile-form-label w-1/3"
-                                            inputName={`experience.${index}.endDate`}
-                                            control={control}
-                                            defaultValue={field.endDate}
-                                            placeholderText="MM/YYYY"
-                                            dateFormat="MM/yyyy"
-                                            showMonthYearPicker
-                                            index={index}
-                                            inputGroup="experience"
-                                            fieldName="endDate"
-                                        /> */}
-
-                                        {index === 0 ? 
-                                        <></> 
-                                        : 
-                                        <div className="flex justify-end">
-                                            <button className="border flex items-center text-red-400 text-xs border-red-400 px-1 rounded" onClick={() => experienceRemove(index)}><CloseOutlined /> Remove</button> 
-                                        </div>
-                                        }
-                                        {index === experienceFields.length - 1 ? <></> : <hr className="my-6 mx-8"/> }
-                                    </div>
-                                )
-                            })}
-                        </div>
-                        <div className="flex justify-end">
-                            <button className="border border-gray-5 border-dashed text-gray-7 py-2 px-4 text-sm" type="button" onClick={() => handleAddExperienceHistory()}>+ Add experience</button>
-                        </div>
-                        
+                        <PrimaryTransparentButton type="button" extraStyle="py-1">Fetch linkedIn info</PrimaryTransparentButton>
                     </div>
-                </FormContentPanel>
+                    <hr className="my-6" />
+                    <div className="px-4 sm:px-6">
+                        <div className="space-y-6">
+                            <div className="space-y-6">
+                                {educationFields.map((field, index) => {
+                                    return (
+                                        <div key={field.id} className="space-y-6">
+                                            <TextInputInline
+                                                register={register}
+                                                errors={errors}
+                                                inputName={`education.${index}.school`}
+                                                placeholder="Enter school here"
+                                                type="text"
+                                                validation={{}}
+                                                labelClassName="profile-form-label"
+                                                labelText="School:"
+                                                defaultValue={field.school}
+                                            />
+
+                                            <TextInputInline
+                                                register={register}
+                                                errors={errors}
+                                                inputName={`education.${index}.degree`}
+                                                placeholder="Enter degree here"
+                                                type="text"
+                                                validation={{}}
+                                                labelClassName="profile-form-label"
+                                                labelText="Degree:"
+                                                defaultValue={field.degree}
+                                            />
+                                            <TextInputInline
+                                                register={register}
+                                                errors={errors}
+                                                inputName={`education.${index}.field`}
+                                                placeholder="Technology"
+                                                type="text"
+                                                validation={{}}
+                                                labelClassName="profile-form-label"
+                                                labelText="Field of Study:"
+                                                defaultValue={field.field}
+                                            />
+                                            {index === 0 ? 
+                                            <></> 
+                                            : 
+                                            <div className="flex justify-end">
+                                                <button className="border flex items-center text-red-400 text-xs border-red-400 px-1 rounded" onClick={() => educationRemove(index)}><CloseOutlined /> Remove</button> 
+                                            </div>
+                                            }
+                                            {index === educationFields.length - 1 ? <></> : <hr className="my-6 mx-8"/> }
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                            <div className="flex justify-end">
+                                <button className="border border-gray-5 border-dashed text-gray-7 py-2 px-4 text-sm" type="button" onClick={() => handleAddEducationHistory()}>+ Add education</button>
+                            </div>
+                            <hr className="my-8"/>
+                            <div className="space-y-6">
+                                {experienceFields.map((field, index) => {
+                                    return (
+                                        <div key={field.id} className="space-y-6">
+                                            <TextInputInline
+                                                register={register}
+                                                errors={errors}
+                                                inputName={`experience.${index}.company`}
+                                                placeholder="Enter company here"
+                                                type="text"
+                                                validation={{}}
+                                                labelClassName="profile-form-label"
+                                                labelText="Company:"
+                                                defaultValue={field.company}
+                                            />
+
+                                            <TextInputInline
+                                                register={register}
+                                                errors={errors}
+                                                inputName={`experience.${index}.position`}
+                                                placeholder="Enter position here"
+                                                type="text"
+                                                validation={{}}
+                                                labelClassName="profile-form-label"
+                                                labelText="Position:"
+                                                defaultValue={field.position}
+                                            />
+                                            {/* <DateInput 
+                                                labelText="Start Date:"
+                                                labelClassName="profile-form-label w-1/3"
+                                                inputName={`experience.${index}.startDate`}
+                                                control={control}
+                                                defaultValue={field.startDate}
+                                                placeholderText="MM/YYYY"
+                                                dateFormat="MM/yyyy"
+                                                showMonthYearPicker
+                                                index={index}
+                                                inputGroup="experience"
+                                                fieldName="startDate"
+                                            />
+                                            <DateInput 
+                                                labelText="End Date:"
+                                                labelClassName="profile-form-label w-1/3"
+                                                inputName={`experience.${index}.endDate`}
+                                                control={control}
+                                                defaultValue={field.endDate}
+                                                placeholderText="MM/YYYY"
+                                                dateFormat="MM/yyyy"
+                                                showMonthYearPicker
+                                                index={index}
+                                                inputGroup="experience"
+                                                fieldName="endDate"
+                                            /> */}
+
+                                            {index === 0 ? 
+                                            <></> 
+                                            : 
+                                            <div className="flex justify-end">
+                                                <button className="border flex items-center text-red-400 text-xs border-red-400 px-1 rounded" onClick={() => experienceRemove(index)}><CloseOutlined /> Remove</button> 
+                                            </div>
+                                            }
+                                            {index === experienceFields.length - 1 ? <></> : <hr className="my-6 mx-8"/> }
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                            <div className="flex justify-end">
+                                <button className="border border-gray-5 border-dashed text-gray-7 py-2 px-4 text-sm" type="button" onClick={() => handleAddExperienceHistory()}>+ Add experience</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <ProfileFormSidePanel
                 completionPercentage={investorProfile.completionPercentage}

@@ -14,7 +14,7 @@ const NotificationsBar = () => {
     }
 
     return (
-        <div className="cursor-default absolute z-20 mt-2 top-10 lg:top-14 lg:mt-1 -right-20 rounded bg-white  shadow-xl  overflow-y-auto text-gray-9 pb-2" style={{minHeight: "60vh", maxHeight: "80vh", width: '300px'}}>
+        <div className="cursor-default absolute z-20 mt-2 top-10 lg:top-14 lg:mt-1 -right-20 rounded section-bg shadow-xl overflow-y-auto text-gray-9 dark:text-gray-1 pb-2" style={{minHeight: "60vh", maxHeight: "80vh", width: '300px'}}>
             <TabMenu selected={selectedTab} setSelectedTab={setSelectedTab} />
             {renderTab()}
         </div>

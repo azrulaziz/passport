@@ -1,13 +1,17 @@
-import { PrimaryButton, PrimaryTransparentButton } from "components/common/Button";
-import { TextInput } from "components/common/Input";
-import React, {useState} from "react"
+import React, {useState, useEffect} from "react"
+import {useRouter} from 'next/router'
 import { useForm, SubmitHandler, Controller} from "react-hook-form";
+import {useTheme} from 'next-themes'
 import {UploadOutlined} from '@ant-design/icons'
 import Select from "react-select";
+
+import {buildObjectValueForGenderSelect, getStringValueFromReactSelect} from 'lib/utils'
+import { PrimaryButton } from "components/common/Button";
+import { TextInput } from "components/common/Input";
 import Dropzone from './PhotoUpload'
+
 import {useMutation, useQueryClient} from "react-query";
 import { request, gql } from "graphql-request";
-import {useRouter} from 'next/router'
 import {endpoint} from 'config'
 
 interface Props {
@@ -16,53 +20,60 @@ interface Props {
     }
 }
 
+type SelectObj = {
+    value: string
+    label: string
+}
+
 interface FormValues {
     id: number,
     firstName: string,
     lastName: string,
     suffix?: string,
     preferredName?: string,
-    gender?: string
+    gender?: SelectObj,
+    otherPronouns?: string
     headline?: string
     linkedinUrl?: string,
     photo?: string
 }
 
 const genderList = [
-    { value: "male", label: "Male" },
-    { value: "female", label: "Female" },
-    { value: "non-binary", label: "Non binary" }
+    { value: "he/him/his", label: "he/him/his" },
+    { value: "she/her/hers", label: "she/her/hers" },
+    { value: "they/them/theirs", label: "they/them/theirs"},
+    { value: "ze/hir/hirs", label: "ze/hir/hirs"},
+    { value: "others", label: "let me specify"},
 ]
-
-const UPDATE_PERSONAL_INFO = gql`
-  mutation UPDATE_PERSONAL_INFO($id: ID!, $firstName: String!, $lastName: String!, $headline: String!, $linkedinUrl: String!)  {
-    updateUser(id: $id, firstName: $firstName, lastName: $lastName, headline: $headline, linkedinUrl: $linkedinUrl) {
-        id
-        firstName
-        lastName
-        linkedinUrl
-        headline
-        preferredName
-    }
-  }
-`;
 
 const PersonalInfoForm: React.FC<Props> = ({data: {User}}) => {
     const router = useRouter()
-    const { register, control, handleSubmit, formState: { errors }, watch } = useForm<FormValues>({
+    const {theme, setTheme} = useTheme()
+    const { register, control, handleSubmit, setValue, formState: { errors }, watch } = useForm<FormValues>({
         defaultValues: {
             firstName: User.firstName,
             lastName: User.lastName,
             suffix: User.suffix,
             preferredName: User.preferredName,
-            gender: User.gender,
+            gender: User.gender ? buildObjectValueForGenderSelect(User.gender) : null,
+            otherPronouns: User.otherPronouns,
             headline: User.headline,
             linkedinUrl: User.linkedinUrl
         }
     });
-
+    const watchGenderPronouns = watch('gender')
     const [uploadedPhoto, setUploadedPhoto] = useState(null)
+    const [specifyGender, setSpecifyGender] = useState(false)
 
+    useEffect(() => {
+        if (watchGenderPronouns && watchGenderPronouns.value === 'others') {
+            setSpecifyGender(true)
+        } else {
+            setSpecifyGender(false)
+            setValue('otherPronouns', "")
+        }
+    }, [watchGenderPronouns])
+    
     const queryClient = useQueryClient()
     const {mutate} = useMutation((values: FormValues) =>
         request(endpoint, UPDATE_PERSONAL_INFO, values), {
@@ -70,19 +81,37 @@ const PersonalInfoForm: React.FC<Props> = ({data: {User}}) => {
                 console.log(error)
             },
             onSuccess: (data) => {
-                console.log(data)
                 queryClient.invalidateQueries('personalInfoForm')
                 queryClient.invalidateQueries('profile')
                 router.push('/profile')
             }
         }
     );
+
+    const handleGenderData = (gender, otherPronouns) => {
+        if (gender && gender.value === 'others' && !otherPronouns) {
+            return ""
+        } else {
+            return getStringValueFromReactSelect(gender)
+        }
+    }
     
-    const handleSubmitPersonalInfo: SubmitHandler<FormValues> = (formData) => {
-        console.log(formData)
-        formData.id = 1
-        formData.photo = ""
-        mutate(formData)
+    const handleSubmitPersonalInfo = (data: FormValues) => {
+        
+        const updatePersonalInfo = {
+            id: 1,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            suffix: data.suffix,
+            preferredName: data.preferredName,
+            gender: handleGenderData(data.gender, data.otherPronouns),
+            otherPronouns: data.otherPronouns,
+            headline: data.headline,
+            linkedinUrl: data.linkedinUrl,
+            photo: "",
+        }
+        // console.log(updatePersonalInfo)
+        mutate(updatePersonalInfo)
     }
 
     const handleSetUploadedPhoto = (e) => {
@@ -90,7 +119,7 @@ const PersonalInfoForm: React.FC<Props> = ({data: {User}}) => {
     }
 
     return (
-        <div className="bg-white p-6">
+        <div className="section-bg p-6">
             <h1 className="main-title">Personal Information</h1>
             <p className="sub-title">Modify your personal information.</p>
             <hr className="my-6" />
@@ -194,24 +223,62 @@ const PersonalInfoForm: React.FC<Props> = ({data: {User}}) => {
 
                     <div className="flex space-x-4 my-6">
                             <div className="w-full relative">
-                                <label htmlFor="gender" className="profile-form-label">Preferred Gender Pronoun</label>
+                                <label htmlFor="gender" className="profile-form-label">Preferred Gender Pronouns</label>
                                 <Controller
                                     name="gender"
                                     control={control}
-                                    defaultValue={{value: "male", label: "Male"}}
                                     render={({ field }) => 
                                         <Select 
                                             id="gender"
                                             {...field} 
-                                            className="w-1/2 pt-2"
+                                            className="w-1/2 pt-2 text-sm capitalize"
+                                            classNamePrefix="react-select"
                                             options={genderList} 
                                             placeholder="Please Select"
+                                            styles={{
+                                                control: styles => ({ 
+                                                    ...styles, 
+                                                    backgroundColor: `${theme === 'dark' ? '#3B3B3B' : '#fff' }`,
+                                                    transition: 'none'
+                                                }),
+                                                menu: styles => ({ 
+                                                    ...styles, 
+                                                    backgroundColor: `${theme === 'dark' ? '#3B3B3B' : '#fff' }`,
+                                                }),
+                                                singleValue: styles => ({
+                                                    ...styles,
+                                                    color: `${theme === 'dark' ? '#fff' : '#3B3B3Bf' }`
+                                                }),
+                                                option: base => ({
+                                                    ...base,
+                                                    "&:hover": {
+                                                      backgroundColor: 'lightgray'
+                                                    }
+                                                })
+                                            }}
                                         />
                                     }
                                 />
                             </div>
                             <div></div>
                     </div>
+                    {
+                        specifyGender ?
+                        <TextInput
+                            register={register}
+                            errors={errors}
+                            inputName="otherPronouns"
+                            placeholder="Preferred pronouns"
+                            type="name"
+                            validation={{
+                                
+                            }}
+                            labelClassName=""
+                            labelText={<span className="profile-form-label">Specify your preferred pronouns</span>}
+                        />
+                        :
+                        <></>
+                    }
 
                     <div className="flex space-x-4 my-6">
                         <div className="w-full relative">
@@ -258,3 +325,35 @@ const PersonalInfoForm: React.FC<Props> = ({data: {User}}) => {
 } 
 
 export default PersonalInfoForm
+
+
+const UPDATE_PERSONAL_INFO = gql`
+  mutation UPDATE_PERSONAL_INFO(
+        $id: ID!, 
+        $firstName: String!, 
+        $lastName: String!, 
+        $gender: String!,
+        $otherPronouns: String!,
+        $headline: String!, 
+        $linkedinUrl: String!
+    )  {
+    updateUser(
+        id: $id, 
+        firstName: $firstName, 
+        lastName: $lastName, 
+        gender: $gender,
+        otherPronouns: $otherPronouns
+        headline: $headline, 
+        linkedinUrl: $linkedinUrl
+    ) {
+        id
+        firstName
+        lastName
+        gender
+        otherPronouns
+        linkedinUrl
+        headline
+        preferredName
+    }
+  }
+`;

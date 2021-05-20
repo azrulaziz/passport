@@ -2,22 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
-  background: #F0F2F5;
-}
-
-
 @layer base {
     .main-heading {
       @apply text-2xl text-primary-black font-black;
     }
 
     .main-title {
-      @apply text-gray-9 font-bold text-xl sm:text-2xl;
+      @apply text-gray-9 dark:text-gray-1 font-bold text-xl sm:text-2xl;
     }
 
     .sub-title {
-      @apply text-sm text-gray-8;
+      @apply text-sm text-gray-8 dark:text-white;
+    }
+
+    .section-bg {
+      @apply bg-white dark:bg-gray-10;
     }
 
     .edit-profile-form {
@@ -29,16 +28,15 @@ html, body {
     }
 
     .edit-profile-side {
-      @apply py-1 px-4 w-full md:w-3/12 sticky top-12 md:top-20 bg-primary-gray;
+      @apply py-1 px-4 w-full md:w-3/12 sticky top-12 md:top-20 bg-primary-gray dark:bg-primary-black;
     }
 
     .profile-form-label {
-      @apply pb-2 text-sm text-gray-10;
+      @apply pb-2 text-sm text-gray-10 dark:text-gray-1;
     }
   
-    
     .sub-heading {
-        @apply text-sm text-primary-black font-black;
+        @apply text-sm text-primary-black font-black dark:text-primary-gray;
     }
     
     .active-link {
@@ -46,7 +44,7 @@ html, body {
     }
 
     .link {
-      @apply py-3 px-4 text-xs text-gray-9 flex space-x-2 my-2 cursor-pointer;
+      @apply py-3 px-4 text-xs text-gray-9 dark:text-gray-1 flex space-x-2 my-2 cursor-pointer;
     }
 
     .collapsed-active-link {
@@ -54,10 +52,57 @@ html, body {
     }
 
     .collapsed-link {
-      @apply py-3 px-4 text-xs text-gray-9 flex space-x-2 my-2 cursor-pointer;
+      @apply py-3 px-4 text-xs text-gray-9 dark:text-gray-1 flex space-x-2 my-2 cursor-pointer;
     }
+
 }
 
+/* customize ant-design component styles */
 .ant-collapse-content > .ant-collapse-content-box {
   padding: 0px 0px !important; 
 }
+
+/* customize react-select styles */
+.react-select__placeholder {
+  font-size: 14px !important;
+  color: #9CA3AF !important;  
+}
+
+.react-select__indicator-separator {
+  display: none;
+}
+
+/* customize react-modal styles */
+.modal-height {
+  height: 90vh;
+}
+
+.ReactModal__Content {
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 100ms ease-in;
+}
+
+.ReactModal__Content--after-open{
+  opacity: 1;
+  transform: scale(1);
+}
+
+.ReactModal__Content--before-close{
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+
+
+
+/* ---experimental css below--- */
+/* 
+/* .ant-progress-text {
+  color: pink !important;
+} */
+
+/* .ant-collapse-icon-position-right > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow  {
+  color: theme('colors.white') !important;
+} */
+/* ---end of experimental css--- */

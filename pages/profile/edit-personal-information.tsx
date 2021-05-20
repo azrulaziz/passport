@@ -18,6 +18,7 @@ const GET_PERSONAL_INFO = gql`
       suffix
       preferredName
       gender
+      otherPronouns
       headline
       linkedinUrl
       photo

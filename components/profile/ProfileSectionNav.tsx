@@ -2,7 +2,7 @@ import { Link, animateScroll as scroll } from "react-scroll";
 
 const ProfileSectionNav = ({sections}) => {
     return (
-        <nav className="my-8 text-gray-10 text-base space-y-5 hidden md:block">
+        <nav className="my-8 text-gray-10 dark:text-gray-1 text-base space-y-5 hidden md:block">
             {sections.map(each => {
                 return (
                     <div key={each} className="cursor-pointer capitalize leading-7">

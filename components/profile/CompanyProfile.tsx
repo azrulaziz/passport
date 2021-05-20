@@ -3,8 +3,9 @@ import useSectionCompletion from 'lib/useSectionCompletion'
 import SectionCompletion from './SectionCompletion'
 import SectionPanel from './SectionPanel'
 import dayjs from 'dayjs'
+import InlineTagPanel from 'components/common/InlineTagPanel'
 
-const CompanyProfile = ({profile}) => {
+const CompanyProfile = ({profile, visitorMode = null}) => {
     
     if (profile && profile.length < 1) {
         return (
@@ -15,15 +16,18 @@ const CompanyProfile = ({profile}) => {
 
     return (
         <div className="space-y-4">
-            <SectionCompletion profileName="company" section={companyProfile.incompleteSection} editProfileLink="/profile/edit-company-profile" />
-
+            {visitorMode ?
+            <></>
+            :
+            <SectionCompletion profileName="company" section={companyProfile.incompleteSection} editProfileLink="/profile/edit-company-profile" visitorModeLink="/profile/visitor-mode/company-profile" />
+            }
             {profile[0]?.companyName || profile[0]?.linkedinProfile || profile[0]?.companyFounded || profile[0]?.companyWebsite || profile[0].stage || profile[0].businessModel || profile[0].sectors.length > 0 ?
             <SectionPanel panelTitle="Introduction" icon={<AlignLeftOutlined />}>
                 <InlineTextPanel title="Company Name" data={profile[0]?.companyName} />
                 <InlineTextLink title="LinkedIn Profile" data={profile[0]?.linkedinProfile} />
 
                 <hr className="my-8" />
-                <InlineTextPanel title="Company Founded" data={dayjs(profile[0]?.companyFounded).format('YYYY')} />
+                <InlineDatePanel title="Company Founded" data={profile[0]?.companyFounded} />
                 <InlineTextLink title="Company Website" data={profile[0]?.companyWebsite} />
                 <InlineTagPanel title="Business Sector" data={profile[0].sectors} />
                 <InlineTextPanel title="Current Stage" data={profile[0]?.stage} />
@@ -79,8 +83,19 @@ const InlineTextPanel = ({title, data}) => {
 
     return (
         <div className="flex">
-            <p className="w-1/3 text-sm text-gray-10">{title}:</p>
-            <p className="w-2/3 text-sm text-gray-10 capitalize">{data}</p>
+            <p className="w-1/3 text-sm ">{title}:</p>
+            <p className="w-2/3 text-sm capitalize">{data}</p>
+        </div>
+    )
+}
+
+const InlineDatePanel = ({title, data}) => {
+    if (!data) return <></>
+
+    return (
+        <div className="flex">
+            <p className="w-1/3 text-sm ">{title}:</p>
+            <p className="w-2/3 text-sm capitalize">{dayjs(data).format('YYYY')}</p>
         </div>
     )
 }
@@ -90,27 +105,8 @@ const InlineTextLink = ({title, data}) => {
 
     return (
         <div className="flex">
-            <p className="w-1/3 text-sm text-gray-10">{title}:</p>
+            <p className="w-1/3 text-sm ">{title}:</p>
             <a className="underline text-sm text-primary-blue" href={data}>{data}</a>
-        </div>
-    )
-}
-
-const InlineTagPanel = ({title, data}) => {
-    if (data.length < 1) return <></>
-    return (
-        <div className="flex items-center">
-            <p className="w-1/3 text-sm text-gray-10">{title}:</p>
-            <div className="w-2/3 space-x-1">
-            {data.map(each => {
-                return (
-                    <p key={each} className="px-2 py-1 inline-block text-gray-9 text-xs bg-gray-2 border border-gray-5 rounded-sm">
-                        {each}
-                    </p>
-                )
-            })}
-
-            </div>
         </div>
     )
 }

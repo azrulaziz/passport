@@ -43,7 +43,7 @@ const ProductTabs = ({initialTab}) => {
                     wrapperClass=" mx-2 w-full "
                     selected={selected}
                     scrollToSelected={true}
-                    onSelect={(key) => setSelected(key)}
+                    onSelect={(key) => setSelected(key)} // change to another function, append query params & add product_name
                 />
             </nav>
             <hr />

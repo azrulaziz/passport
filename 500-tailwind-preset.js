@@ -13,6 +13,10 @@ module.exports = {
           sans: ['Overpass', ...defaultTheme.fontFamily.sans],
         },
         colors: {
+          // white: colors.white,
+          // black: colors.black,
+          // gray: colors.trueGray,
+          // red: colors.red,
           primary: {
             gray: '#F0F2F5',
             black: '#1B1B1B',

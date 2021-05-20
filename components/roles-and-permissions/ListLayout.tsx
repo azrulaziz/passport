@@ -5,20 +5,20 @@ interface Props {
     children: React.ReactNode
 }
 
-const ListLayout = ({title, buttonText, children, initialTab}) => {
+const ListLayout = ({title, buttonText, buttonFunction, children, initialTab}) => {
     return (
-        <div className="p-6 w-full bg-white">
+        <div className="p-6 w-full bg-white dark:bg-gray-10">
             <div className="flex justify-between items-center mb-2">
                 <div>
-                    <h3 className="pl-2 text-2xl font-bold">{title}</h3>
+                    <h1 className="pl-2 text-2xl font-bold">{title}</h1>
                 </div>
                 <div className="">
-                    <PrimaryButton type="button">{buttonText}</PrimaryButton>
+                    <PrimaryButton type="button" onClick={() => buttonFunction()}>{buttonText}</PrimaryButton>
                 </div>
             </div>
             <ProductTabs initialTab={initialTab} />
 
-            <div className="my-6">
+            <div className="">
                 {children}
             </div>
 

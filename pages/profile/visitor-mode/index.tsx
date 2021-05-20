@@ -4,7 +4,6 @@ import Layout from "components/common/Layout"
 import { useTranslation } from 'next-i18next'
 import ProfileLayout from 'components/profile/ProfileLayout'
 import PersonalInfoPanel from 'components/profile/PersonalInfoPanel'
-import AddProfilePanel from 'components/profile/AddProfilePanel'
 import {useQuery} from "react-query";
 import { request, gql } from "graphql-request";
 import UserProfile from 'components/profile/UserProfile'
@@ -13,6 +12,7 @@ import LoadingLayout from 'components/common/LoadingLayout'
 import {useHeaderTitle} from 'store/useHeaderTitle'
 import {useEffect} from 'react'
 import {endpoint} from 'config'
+import VisitorModeSidePanel from 'components/profile/VisitorModeSidePanel'
 
 const GET_PROFILE_DATA = gql`
   query  {
@@ -116,12 +116,9 @@ export default function Profile() {
         <title>{t('head-title')}</title>
       </Head>
       <ProfileLayout 
-        personalInfo={<PersonalInfoPanel data={data} />}
-        main={<UserProfile profile={data?.User?.UserProfiles} />} 
-        side={
-        <div className="lg:mt-10">
-          <AddProfilePanel data={data} />
-        </div>}
+        personalInfo={<PersonalInfoPanel data={data} visitorMode={true} />}
+        main={<UserProfile profile={data?.User?.UserProfiles} visitorMode={true} />} 
+        side={<VisitorModeSidePanel link="/profile" />}
       />
     </Layout>
   )
