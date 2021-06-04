@@ -3,9 +3,7 @@ import { useDropzone } from "react-dropzone";
 import {UploadOutlined} from '@ant-design/icons'
 import { PrimaryButton, PrimaryTransparentButton } from "components/common/Button";
 
-const Dropzone = ({
-    onChange,
-  }) => {
+const Dropzone = ({onChange, labelText}) => {
   
     const {
       getRootProps,
@@ -14,7 +12,7 @@ const Dropzone = ({
   
     return (
       <div {...getRootProps()}>
-        <input {...getInputProps({ onChange })} />
+        <input {...getInputProps({ onChange })} aria-label={labelText}/>
         <PrimaryTransparentButton type="button" extraStyle="w-full px-0">
              <p className="flex items-center justify-center">
                  <UploadOutlined />

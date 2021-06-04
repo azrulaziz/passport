@@ -8,10 +8,10 @@ const CommunicationPreferences = () => {
         <FormContentPanel id="communication preferences" title="Communication Preferences" subtitle="Control how you receive communications within 500.">
             <div className="space-y-6">
                 <SettingsSection sectionName="Enable email notifications" sectionDescription="Allow email notifications">
-                        <p className="text-gray-9 text-sm">Direct Messages</p>
-                        <p className="text-gray-9 text-sm">Posts & comments</p>
-                        <p className="text-gray-9 text-sm">News</p>
-                        <p className="text-gray-9 text-sm">Program Applications</p>
+                        <p className="text-sm">Direct Messages</p>
+                        <p className="text-sm">Posts & comments</p>
+                        <p className="text-sm">News</p>
+                        <p className="text-sm">Program Applications</p>
                 </SettingsSection>
                 <hr />
                 <InvitationsToConnect />
@@ -36,7 +36,7 @@ const InvitationsToConnect = () => {
             </div>
             <div className="w-3/5 flex flex-wrap justify-end space-y-3 md:space-y-0">
                 <div className="w-full md:w-3/4">
-                    <p className="text-gray-9 text-sm">{invitationToConnect ? "Yes" : "No"}</p>
+                    <p className=" text-sm">{invitationToConnect ? "Yes" : "No"}</p>
                 </div>
                 <div className="w-full md:w-1/4 justify-end flex">
                     <div>
@@ -61,7 +61,7 @@ const Messages = () => {
             </div>
             <div className="w-3/5 flex flex-wrap justify-end space-y-3 md:space-y-0">
                 <div className="w-full md:w-3/4">
-                    <p className="text-gray-9 text-sm">{messages ? "Yes" : "No"}</p>
+                    <p className="text-sm">{messages ? "Yes" : "No"}</p>
                 </div>
                 <div className="w-full md:w-1/4 justify-end flex">
                     <div>

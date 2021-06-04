@@ -102,12 +102,12 @@ const RolesAndPermissionsTable = () => {
     
     return (
         <table {...getTableProps()} className=" w-full my-2">
-            <thead className="border-b bg-gray-2">
+            <thead className="border-b bg-gray-2 dark:bg-gray-8">
                 {headerGroups.map(headerGroup => (
                     <tr {...headerGroup.getHeaderGroupProps()} className="">
                         {headerGroup.headers.map(column => {
                             return (
-                            <th {...column.getHeaderProps(column.getSortByToggleProps())} className={`${column.className} py-1 px-4 text-xs text-gray-8 font-normal text-left`}>
+                            <th {...column.getHeaderProps(column.getSortByToggleProps())} className={`${column.className} py-1 px-4 text-xs text-gray-8 dark:text-gray-2 font-normal text-left`}>
                                 <div className="flex items-center">
                                     {column.render('Header')}
                                     {column.canSort ? <TableSortArrow /> : ""}

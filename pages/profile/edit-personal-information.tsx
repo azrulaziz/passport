@@ -5,7 +5,7 @@ import { useTranslation } from 'next-i18next'
 import ProfileLayout from 'components/profile/ProfileLayout'
 import PersonalInfoForm from 'components/profile/PersonalInfoForm'
 import { useRouter } from 'next/router'
-import {useQuery} from "react-query";
+import {useQuery, useMutation, useQueryClient} from "react-query";
 import { request, gql } from "graphql-request";
 import {endpoint} from 'config'
 
@@ -34,7 +34,22 @@ export default function EditPersonalInfo() {
     const data = await request(endpoint, GET_PERSONAL_INFO);
     return data;
   }
+
   const { data, status } = useQuery('personalInfoForm', fetchPersonalInfo);
+  const queryClient = useQueryClient()
+  const { mutate } = useMutation((values) =>
+      request(endpoint, UPDATE_PERSONAL_INFO, values), {
+      onError: (error) => {
+        console.log(error)
+      },
+      onSuccess: (data) => {
+        queryClient.invalidateQueries('personalInfoForm')
+        queryClient.invalidateQueries('profile')
+        router.push('/profile')
+      }
+    }
+  );
+  
   if (status === 'loading') {
     return (
       <Layout>
@@ -46,13 +61,18 @@ export default function EditPersonalInfo() {
     )
   }
 
+
+  const handleSaveChanges = (data) => {
+    mutate(data)
+  }
+
   return (
     <Layout>
       <Head>
         <title>{t('head-title')}</title>
       </Head>
       <ProfileLayout 
-        personalInfo={<PersonalInfoForm data={data} />} 
+        personalInfo={<PersonalInfoForm data={data} saveChanges={handleSaveChanges} />} 
         main={<></>}
         side={<></>}
       />
@@ -65,3 +85,34 @@ export const getStaticProps = async ({ locale }) => ({
     ...await serverSideTranslations(locale, ['common', 'profile']),
   }
 })
+
+const UPDATE_PERSONAL_INFO = gql`
+  mutation UPDATE_PERSONAL_INFO(
+        $id: ID!, 
+        $firstName: String!, 
+        $lastName: String!, 
+        $gender: String!,
+        $otherPronouns: String!,
+        $headline: String!, 
+        $linkedinUrl: String!
+    )  {
+    updateUser(
+        id: $id, 
+        firstName: $firstName, 
+        lastName: $lastName, 
+        gender: $gender,
+        otherPronouns: $otherPronouns
+        headline: $headline, 
+        linkedinUrl: $linkedinUrl
+    ) {
+        id
+        firstName
+        lastName
+        gender
+        otherPronouns
+        linkedinUrl
+        headline
+        preferredName
+    }
+  }
+`;

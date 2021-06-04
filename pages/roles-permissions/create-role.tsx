@@ -21,7 +21,7 @@ export default function RolesPermissions() {
         <Head>
             <title>{t('head-title')}</title>
         </Head>
-        <CreateRole moduleSections={moduleSections} />
+        <CreateRole moduleData={mockData} />
     </RoleLayout>
   )
 }
@@ -31,3 +31,399 @@ export const getStaticProps = async ({ locale }) => ({
     ...await serverSideTranslations(locale, ['common', 'profile']),
   }
 })
+
+// ! “Read” permission is automatically granted if “Modify” or “Write” permissions are granted. 
+const mockData = [
+  {
+      module: 'dashboard',
+      sections: [
+          {
+              name: 'program applications',
+              visibility: true,
+              allReadAccess: true,
+              allModifyAccess: false,
+              allWriteAccess: false,
+              permissionList: [
+                  {
+                      type: "view dashboard",
+                      read: true,
+                      modify: false,
+                      write: false,
+                  },
+                  {
+                      type: "start an application",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+                  {
+                      type: "submit an application",
+                      read: true,
+                      modify: true,
+                      write: true,
+                  },
+              ]
+          },
+          {
+              name: 'managed applications',
+              visibility: false,
+              allReadAccess: true,
+              allModifyAccess: false,
+              allWriteAccess: false,
+              permissionList: [
+                  {
+                      type: "view dashboard",
+                      read: true,
+                      modify: false,
+                      write: false,
+                  },
+                  {
+                      type: "start an application",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+                  {
+                      type: "submit an application",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+                  {
+                      type: "view applicatio progress",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+              ]
+          },
+          {
+              name: 'applications to evaluate',
+              visibility: true,
+              allReadAccess: true,
+              allModifyAccess: false,
+              allWriteAccess: false,
+              permissionList: [
+                  {
+                      type: "view dashboard",
+                      read: true,
+                      modify: false,
+                      write: false,
+                  },
+                  {
+                      type: "start an application",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+                  {
+                      type: "submit an application",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+                  {
+                      type: "view applicatio progress",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+              ]
+          },
+      ]
+  },
+  {
+      module: 'open programs',
+      sections: [
+          {
+              name: 'view programs',
+              visibility: true,
+              allReadAccess: true,
+              allModifyAccess: false,
+              allWriteAccess: false,
+              permissionList: [
+                  {
+                      type: "view dashboard",
+                      read: true,
+                      modify: false,
+                      write: false,
+                  },
+                  {
+                      type: "start an application",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+                  {
+                      type: "submit an application",
+                      read: true,
+                      modify: true,
+                      write: true,
+                  },
+              ]
+          },
+          {
+              name: 'managed programs',
+              visibility: false,
+              allReadAccess: true,
+              allModifyAccess: false,
+              allWriteAccess: false,
+              permissionList: [
+                  {
+                      type: "view dashboard",
+                      read: true,
+                      modify: false,
+                      write: false,
+                  },
+                  {
+                      type: "start an application",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+                  {
+                      type: "submit an application",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+                  {
+                      type: "view applicatio progress",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+              ]
+          },
+          {
+              name: 'applications to evaluate',
+              visibility: true,
+              allReadAccess: true,
+              allModifyAccess: false,
+              allWriteAccess: false,
+              permissionList: [
+                  {
+                      type: "view dashboard",
+                      read: true,
+                      modify: false,
+                      write: false,
+                  },
+                  {
+                      type: "start an application",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+                  {
+                      type: "submit an application",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+                  {
+                      type: "view applicatio progress",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+              ]
+          },
+      ]
+  },
+  {
+      module: 'referral management',
+      sections: [
+          {
+              name: 'program applications',
+              visibility: true,
+              allReadAccess: true,
+              allModifyAccess: false,
+              allWriteAccess: false,
+              permissionList: [
+                  {
+                      type: "view dashboard",
+                      read: true,
+                      modify: false,
+                      write: false,
+                  },
+                  {
+                      type: "start an application",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+                  {
+                      type: "submit an application",
+                      read: true,
+                      modify: true,
+                      write: true,
+                  },
+              ]
+          },
+          {
+              name: 'managed applications',
+              visibility: false,
+              allReadAccess: true,
+              allModifyAccess: false,
+              allWriteAccess: false,
+              permissionList: [
+                  {
+                      type: "view dashboard",
+                      read: true,
+                      modify: false,
+                      write: false,
+                  },
+                  {
+                      type: "start an application",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+                  {
+                      type: "submit an application",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+                  {
+                      type: "view applicatio progress",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+              ]
+          },
+          {
+              name: 'applications to evaluate',
+              visibility: true,
+              allReadAccess: true,
+              allModifyAccess: false,
+              allWriteAccess: false,
+              permissionList: [
+                  {
+                      type: "view dashboard",
+                      read: true,
+                      modify: false,
+                      write: false,
+                  },
+                  {
+                      type: "start an application",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+                  {
+                      type: "submit an application",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+                  {
+                      type: "view applicatio progress",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+              ]
+          },
+      ]
+  },
+  {
+      module: 'admin & manager settings',
+      sections: [
+          {
+              name: 'program applications',
+              visibility: true,
+              allReadAccess: true,
+              allModifyAccess: false,
+              allWriteAccess: false,
+              permissionList: [
+                  {
+                      type: "view dashboard",
+                      read: true,
+                      modify: false,
+                      write: false,
+                  },
+                  {
+                      type: "start an application",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+                  {
+                      type: "submit an application",
+                      read: true,
+                      modify: true,
+                      write: true,
+                  },
+              ]
+          },
+          {
+              name: 'managed applications',
+              visibility: false,
+              allReadAccess: true,
+              allModifyAccess: false,
+              allWriteAccess: false,
+              permissionList: [
+                  {
+                      type: "view dashboard",
+                      read: true,
+                      modify: false,
+                      write: false,
+                  },
+                  {
+                      type: "start an application",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+                  {
+                      type: "submit an application",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+                  {
+                      type: "view applicatio progress",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+              ]
+          },
+          {
+              name: 'applications to evaluate',
+              visibility: true,
+              allReadAccess: true,
+              allModifyAccess: false,
+              allWriteAccess: false,
+              permissionList: [
+                  {
+                      type: "view dashboard",
+                      read: true,
+                      modify: false,
+                      write: false,
+                  },
+                  {
+                      type: "start an application",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+                  {
+                      type: "submit an application",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+                  {
+                      type: "view applicatio progress",
+                      read: true,
+                      modify: false,
+                      write: true,
+                  },
+              ]
+          },
+      ]
+  }
+]

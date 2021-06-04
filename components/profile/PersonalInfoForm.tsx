@@ -18,6 +18,7 @@ interface Props {
     data: {
         User: FormValues
     }
+    saveChanges: ({}) => void
 }
 
 type SelectObj = {
@@ -46,7 +47,7 @@ const genderList = [
     { value: "others", label: "let me specify"},
 ]
 
-const PersonalInfoForm: React.FC<Props> = ({data: {User}}) => {
+const PersonalInfoForm: React.FC<Props> = ({data: {User}, saveChanges}) => {
     const router = useRouter()
     const {theme, setTheme} = useTheme()
     const { register, control, handleSubmit, setValue, formState: { errors }, watch } = useForm<FormValues>({
@@ -74,19 +75,19 @@ const PersonalInfoForm: React.FC<Props> = ({data: {User}}) => {
         }
     }, [watchGenderPronouns])
     
-    const queryClient = useQueryClient()
-    const {mutate} = useMutation((values: FormValues) =>
-        request(endpoint, UPDATE_PERSONAL_INFO, values), {
-            onError: (error) => {
-                console.log(error)
-            },
-            onSuccess: (data) => {
-                queryClient.invalidateQueries('personalInfoForm')
-                queryClient.invalidateQueries('profile')
-                router.push('/profile')
-            }
-        }
-    );
+    // const queryClient = useQueryClient()
+    // const {mutate} = useMutation((values: FormValues) =>
+    //     request(endpoint, UPDATE_PERSONAL_INFO, values), {
+    //         onError: (error) => {
+    //             console.log(error)
+    //         },
+    //         onSuccess: (data) => {
+    //             queryClient.invalidateQueries('personalInfoForm')
+    //             queryClient.invalidateQueries('profile')
+    //             router.push('/profile')
+    //         }
+    //     }
+    // );
 
     const handleGenderData = (gender, otherPronouns) => {
         if (gender && gender.value === 'others' && !otherPronouns) {
@@ -111,7 +112,8 @@ const PersonalInfoForm: React.FC<Props> = ({data: {User}}) => {
             photo: "",
         }
         // console.log(updatePersonalInfo)
-        mutate(updatePersonalInfo)
+        // mutate(updatePersonalInfo)
+        saveChanges(updatePersonalInfo)
     }
 
     const handleSetUploadedPhoto = (e) => {
@@ -124,7 +126,7 @@ const PersonalInfoForm: React.FC<Props> = ({data: {User}}) => {
             <p className="sub-title">Modify your personal information.</p>
             <hr className="my-6" />
 
-            <form className="flex flex-wrap justify-around px-6 -mx-2" onSubmit={handleSubmit(handleSubmitPersonalInfo)}>
+            <form className="flex flex-wrap justify-around px-6 -mx-2" onSubmit={handleSubmit(handleSubmitPersonalInfo)} data-testid="personal-info">
 
                 <div className="md:w-1/3 px-1 flex justify-start mb-4">
                     <div className="w-48">
@@ -142,13 +144,14 @@ const PersonalInfoForm: React.FC<Props> = ({data: {User}}) => {
                             control={control}
                             render={({ field: {onChange} }) => (
                                 <Dropzone
-                                  onChange={e => {
-                                      onChange(e.target.files[0])
-                                      handleSetUploadedPhoto(e.target.files[0])
+                                    labelText="photo"
+                                    onChange={e => {
+                                            onChange(e.target.files[0])
+                                            handleSetUploadedPhoto(e.target.files[0])
+                                        }
                                     }
-                                  }
                                 />
-                              )}
+                            )}
                         />
                         
                         <p className="italic text-xs text-gray-7 mt-2">
@@ -230,6 +233,7 @@ const PersonalInfoForm: React.FC<Props> = ({data: {User}}) => {
                                     render={({ field }) => 
                                         <Select 
                                             id="gender"
+                                            aria-label="Preferred Gender Pronouns"
                                             {...field} 
                                             className="w-1/2 pt-2 text-sm capitalize"
                                             classNamePrefix="react-select"

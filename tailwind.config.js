@@ -16,7 +16,12 @@ module.exports = {
     
   },
   variants: {
-    extend: {},
+    extend: {
+      transitionProperty: {
+        'height': 'height',
+        'spacing': 'margin, padding',
+       }
+    },
   },
   plugins: [],
 }

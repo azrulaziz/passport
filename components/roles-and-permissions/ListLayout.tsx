@@ -1,5 +1,6 @@
-import { PrimaryButton } from "components/common/Button"
+// import { PrimaryButton } from "components/common/Button"
 import ProductTabs from './ProductTabs'
+import {PrimaryButton} from 'design-systems'
 
 interface Props {
     children: React.ReactNode
@@ -13,7 +14,7 @@ const ListLayout = ({title, buttonText, buttonFunction, children, initialTab}) =
                     <h1 className="pl-2 text-2xl font-bold">{title}</h1>
                 </div>
                 <div className="">
-                    <PrimaryButton type="button" onClick={() => buttonFunction()}>{buttonText}</PrimaryButton>
+                    <PrimaryButton type="button" handleClick={() => buttonFunction()} size="small">{buttonText}</PrimaryButton>
                 </div>
             </div>
             <ProductTabs initialTab={initialTab} />

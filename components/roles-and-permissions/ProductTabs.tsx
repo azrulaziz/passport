@@ -6,7 +6,7 @@ import {useState} from 'react'
 const TabsItem = ({selected, name}) => {
     const router = useRouter()
     return (
-        <a className={`${selected === name ? "border-b-4 pb-3 border-primary-blue text-primary-blue" : ""}`}>
+        <a className={` ${selected === name ? "border-b-4 pb-3 border-primary-blue text-primary-blue" : ""}`}>
             {name}
         </a>
     )
@@ -37,7 +37,7 @@ const ProductTabs = ({initialTab}) => {
                     alignCenter={false}
                     data={renderHorizontalMenu()}
                     arrowLeft={ArrowLeft}
-                    menuStyle={{width: '100%'}}
+                    menuStyle={{width: '100%', zIndex: -1}}
                     arrowRight={ArrowRight}
                     innerWrapperClass=""
                     wrapperClass=" mx-2 w-full "

@@ -57,12 +57,19 @@
 
 }
 
-/* customize ant-design component styles */
+/* ! custom ant-design component styles */
 .ant-collapse-content > .ant-collapse-content-box {
   padding: 0px 0px !important; 
 }
+.dark .ant-collapse-icon-position-right > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow {
+  color: white;
+}
 
-/* customize react-select styles */
+.dark .ant-progress-text {
+  color: white;
+}
+
+/* ! custom react-select styles */
 .react-select__placeholder {
   font-size: 14px !important;
   color: #9CA3AF !important;  
@@ -72,7 +79,7 @@
   display: none;
 }
 
-/* customize react-modal styles */
+/* ! custom react-modal styles */
 .modal-height {
   height: 90vh;
 }
@@ -93,7 +100,15 @@
   transform: scale(0.5);
 }
 
+/* ! custom react-tooltip */
+.tooltip-container {
+  padding: 0 !important;
+  border: none !important;
+}
 
+.dark .tooltip-container[data-popper-placement*='right'] .tooltip-arrow::after {
+  border-color: transparent #262626 transparent transparent !important;
+}
 
 
 /* ---experimental css below--- */

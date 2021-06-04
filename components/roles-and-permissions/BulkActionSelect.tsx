@@ -22,7 +22,7 @@ const BulkActionSelect = ({optionsArray}) => {
               transition: 'none',
               outline: 'none',
               boxShadow: 'none',
-              border: `${theme === 'dark' ? '1px solid #ffffff' : '1px solid #262626' }`,
+              border: `${theme === 'dark' ? '1px solid #ffffff' : '1px solid #d9d9d9' }`,
               "&:hover": {
                 outline: 'none !important',
                 boxShadow: 'none !important'

@@ -12,6 +12,7 @@ export const TextInput = ({register, errors, inputName, placeholder, type, valid
             <label htmlFor={inputName} className={labelClassName}>{labelText}</label>
             <input
                 id={inputName}
+                aria-label={labelText}
                 aria-invalid={errors[inputName] ? "true" : "false"}
                 {...register(inputName, validation)}
                 className="border border-gray-5 mt-1 block py-2 px-2 w-full rounded text-sm"
@@ -34,6 +35,7 @@ export const TextInputInline = ({register, errors, inputName, placeholder, type,
             <div className="w-full">
                 <input
                     id={inputName}
+                    aria-label={labelText}
                     aria-invalid={errors[inputName] ? "true" : "false"}
                     {...register(inputName, validation)}
                     className="border border-gray-5 py-2 px-2 w-full block rounded text-sm"
@@ -63,6 +65,7 @@ export const TextInputInlineWithIcon = ({register, errors, inputName, type, vali
                 <div className="w-full">
                     <input
                         id={inputName}
+                        aria-label={labelText}
                         aria-invalid={errors[inputName] ? "true" : "false"}
                         {...register(inputName, validation)}
                         className="border border-gray-5 pl-5 py-2 px-2 w-full block rounded text-sm"
@@ -88,6 +91,7 @@ export const InputCheckbox = ({register, errors, inputName, validation, labelCla
             <input
                 id={labelText}
                 type="checkbox"
+                aria-label={labelText}
                 defaultChecked={defaultChecked}
                 aria-invalid={errors[inputName] ? "true" : "false"}
                 {...register(inputName, validation)}
@@ -106,7 +110,14 @@ export const InputRadio = ({register, inputName, groupLabelText, labelClassName,
             {radioList.map(each => {
                 return (
                     <div key={each}>
-                        <input name={inputName} {...register(inputName)} id={each} type="radio" value={each} className=""/>
+                        <input name={inputName} 
+                            id={each} 
+                            aria-label={groupLabelText}
+                            {...register(inputName)} 
+                            type="radio" 
+                            value={each} 
+                            className=""
+                        />
                         <label htmlFor={each} className={`${labelClassName} pl-2 capitalize`}>{each}</label>
                     </div>
                 )
@@ -150,6 +161,7 @@ export const PasswordInput = ({register, errors, inputName, placeholder, validat
             <div className="flex relative">
                 <input
                     id={inputName}
+                    aria-label="Password"
                     aria-invalid={errors[inputName] ? "true" : "false"}
                     {...register(inputName, validation)}
                     className="flex border border-gray-5 py-2 px-2 w-full rounded text-sm "
@@ -183,6 +195,7 @@ export const SelectInput = ({inputName, labelText, labelClassName, control, opti
                         <Select 
                             inputId={inputName}
                             {...field} 
+                            aria-label={labelText}
                             className={`${inputStyle} w-40 text-sm`}
                             options={optionsArray} 
                             placeholder={placeholder}
