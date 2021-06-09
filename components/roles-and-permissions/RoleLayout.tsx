@@ -3,7 +3,7 @@ import Header from "../common/Header"
 import Meta from '../common/Meta'
 import SidebarMenu from "../common/Sidebar"
 import MobileSidebar from "../common/MobileSidebar"
-import {TopBar} from 'design-systems'
+import {TopBar} from 'components/ds/Topbar'
 import {useSidebar} from 'store/useSidebar'
 import {useHeaderTitle} from 'store/useHeaderTitle'
 

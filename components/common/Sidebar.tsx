@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from "react"
 import { BuildOutlined } from '@ant-design/icons'
 import { CollapsedMenuItemWithHover} from "./SideMenuItem"
-import {Sidebar, MenuItemSelection, SubMenuItem, MenuItem, CollapsedMenuItem} from 'design-systems'
+import {Sidebar} from 'components/ds/Sidebar'
+import {MenuItemSelection, SubMenuItem, MenuItem, CollapsedMenuItem} from 'components/ds/NavigationMenu'
 import {useTheme} from 'next-themes'
 import { useRouter } from "next/router";
 import {RiDashboard3Line, RiSettingsFill, RiUserFill} from 'react-icons/ri'

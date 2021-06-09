@@ -1,4 +1,4 @@
-import { PrimaryButton } from "design-systems"
+import { PrimaryButton } from "components/ds/Button"
 import { TextInputInline } from "components/common/Input"
 import {useForm} from "react-hook-form";
 import CreateRoleNav from "./CreateRoleNav";

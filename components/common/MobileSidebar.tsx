@@ -1,6 +1,7 @@
 import React from "react"
 import {MenuOutlined, CloseOutlined} from '@ant-design/icons'
-import {Sidebar, MenuItemSelection, SubMenuItem, MenuItem, CollapsedMenuItem} from 'design-systems'
+import {Sidebar} from 'components/ds/Sidebar'
+import {MenuItemSelection, SubMenuItem, MenuItem} from 'components/ds/NavigationMenu'
 import {useHeaderTitle} from 'store/useHeaderTitle'
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import {useTheme} from 'next-themes'

@@ -2,7 +2,7 @@ import React from "react"
 import Header from "./Header"
 import Meta from './Meta'
 import MobileSidebar from "./MobileSidebar"
-import {TopBar} from 'design-systems'
+import {TopBar} from 'components/ds/Topbar'
 import {useSidebar} from 'store/useSidebar'
 import SidebarMenu from "../common/Sidebar"
 import {useHeaderTitle} from 'store/useHeaderTitle'
