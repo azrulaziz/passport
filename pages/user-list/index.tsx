@@ -9,7 +9,7 @@ import {useHeaderTitle} from 'store/useHeaderTitle'
 import AddUserModal from 'components/roles-and-permissions/AddUserModal'
 import {SearchOutlined, CloseOutlined} from '@ant-design/icons'
 // import { PrimaryButton } from 'components/common/Button'
-import {PrimaryButton} from 'design-systems'
+import {PrimaryButton} from 'components/ds/Button'
 import BulkActionSelect from 'components/roles-and-permissions/BulkActionSelect'
 
 const optionsArray = [

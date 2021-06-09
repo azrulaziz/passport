@@ -1,6 +1,6 @@
 // import { PrimaryButton } from "components/common/Button"
 import ProductTabs from './ProductTabs'
-import {PrimaryButton} from 'design-systems'
+import {PrimaryButton} from 'components/ds/Button'
 
 interface Props {
     children: React.ReactNode

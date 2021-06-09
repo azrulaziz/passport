@@ -7,7 +7,7 @@ import ListLayout from 'components/roles-and-permissions/ListLayout'
 import UserGroupsTable from 'components/roles-and-permissions/UserGroupsTable'
 import {useHeaderTitle} from 'store/useHeaderTitle'
 import CreateGroupModal from 'components/roles-and-permissions/CreateGroupModal'
-import {PrimaryButton, } from 'design-systems'
+// import {PrimaryButton, } from 'design-systems'
 
 export default function UserGroups() {
   const { t } = useTranslation('profile')
