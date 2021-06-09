@@ -90,7 +90,7 @@ const mockData = [
                       write: true,
                   },
                   {
-                      type: "view applicatio progress",
+                      type: "view application progress",
                       read: true,
                       modify: false,
                       write: true,
@@ -123,7 +123,7 @@ const mockData = [
                       write: true,
                   },
                   {
-                      type: "view applicatio progress",
+                      type: "view application progress",
                       read: true,
                       modify: false,
                       write: true,
@@ -188,7 +188,7 @@ const mockData = [
                       write: true,
                   },
                   {
-                      type: "view applicatio progress",
+                      type: "view application progress",
                       read: true,
                       modify: false,
                       write: true,
@@ -221,7 +221,7 @@ const mockData = [
                       write: true,
                   },
                   {
-                      type: "view applicatio progress",
+                      type: "view application progress",
                       read: true,
                       modify: false,
                       write: true,
@@ -319,7 +319,7 @@ const mockData = [
                       write: true,
                   },
                   {
-                      type: "view applicatio progress",
+                      type: "view application progress",
                       read: true,
                       modify: false,
                       write: true,
@@ -384,7 +384,7 @@ const mockData = [
                       write: true,
                   },
                   {
-                      type: "view applicatio progress",
+                      type: "view application progress",
                       read: true,
                       modify: false,
                       write: true,
@@ -417,7 +417,7 @@ const mockData = [
                       write: true,
                   },
                   {
-                      type: "view applicatio progress",
+                      type: "view application progress",
                       read: true,
                       modify: false,
                       write: true,

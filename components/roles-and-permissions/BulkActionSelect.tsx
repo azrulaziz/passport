@@ -22,16 +22,19 @@ const BulkActionSelect = ({optionsArray}) => {
               transition: 'none',
               outline: 'none',
               boxShadow: 'none',
+              zIndex: 0,
               border: `${theme === 'dark' ? '1px solid #ffffff' : '1px solid #d9d9d9' }`,
               "&:hover": {
                 outline: 'none !important',
                 boxShadow: 'none !important'
               },
+              
             }),
             menu: styles => ({ 
                 ...styles, 
                 backgroundColor: `${theme === 'dark' ? '#3B3B3B' : '#fff' }`,
-                width: '300px'
+                width: '300px',
+                zIndex: 0,
             }),
             input: styles => ({
                 ...styles,

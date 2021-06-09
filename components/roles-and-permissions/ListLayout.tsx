@@ -14,7 +14,7 @@ const ListLayout = ({title, buttonText, buttonFunction, children, initialTab}) =
                     <h1 className="pl-2 text-2xl font-bold">{title}</h1>
                 </div>
                 <div className="">
-                    <PrimaryButton type="button" handleClick={() => buttonFunction()} size="small">{buttonText}</PrimaryButton>
+                    <PrimaryButton type="button" handleClick={() => buttonFunction()} size="default">{buttonText}</PrimaryButton>
                 </div>
             </div>
             <ProductTabs initialTab={initialTab} />

@@ -8,7 +8,8 @@ import UserListTable from 'components/roles-and-permissions/UserListTable'
 import {useHeaderTitle} from 'store/useHeaderTitle'
 import AddUserModal from 'components/roles-and-permissions/AddUserModal'
 import {SearchOutlined, CloseOutlined} from '@ant-design/icons'
-import { PrimaryButton } from 'components/common/Button'
+// import { PrimaryButton } from 'components/common/Button'
+import {PrimaryButton} from 'design-systems'
 import BulkActionSelect from 'components/roles-and-permissions/BulkActionSelect'
 
 const optionsArray = [
@@ -174,7 +175,7 @@ export default function UserList() {
                   <BulkActionSelect optionsArray={optionsArray} />
               </div>
               <div className="w-1/3">
-                  <PrimaryButton type="button" extraStyle="">Apply</PrimaryButton>
+                  <PrimaryButton type="button" handleClick={() => {}}>Apply</PrimaryButton>
               </div>
             </div>
 

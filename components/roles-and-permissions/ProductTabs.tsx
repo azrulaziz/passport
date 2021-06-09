@@ -37,7 +37,7 @@ const ProductTabs = ({initialTab}) => {
                     alignCenter={false}
                     data={renderHorizontalMenu()}
                     arrowLeft={ArrowLeft}
-                    menuStyle={{width: '100%', zIndex: -1}}
+                    menuStyle={{width: '100%'}}
                     arrowRight={ArrowRight}
                     innerWrapperClass=""
                     wrapperClass=" mx-2 w-full "

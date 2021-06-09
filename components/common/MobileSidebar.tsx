@@ -1,13 +1,23 @@
 import React from "react"
-import {UserOutlined, SettingOutlined, BuildOutlined, MenuOutlined, CloseOutlined} from '@ant-design/icons'
-import {SideMenuItem, SideMenuItemCollapse, CollapsedSideMenuItem} from "./SideMenuItem"
+import {MenuOutlined, CloseOutlined} from '@ant-design/icons'
+import {Sidebar, MenuItemSelection, SubMenuItem, MenuItem, CollapsedMenuItem} from 'design-systems'
 import {useHeaderTitle} from 'store/useHeaderTitle'
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import SidebarFooterMenu from "./SidebarFooterMenu";
+import {useTheme} from 'next-themes'
+import { useRouter } from "next/router";
+import {RiDashboard3Line, RiSettingsFill, RiUserFill} from 'react-icons/ri'
+import {useSidebar} from 'store/useSidebar'
+import Link from "next/link";
 
 const MobileSidebar: React.FC = () => {
     const mobileSubmenu = useHeaderTitle(state => state.mobileSubmenu)
     const setMobileSubmenu = useHeaderTitle(state => state.setMobileSubmenu)
+
+    const router = useRouter();
+    const {theme, setTheme} = useTheme()
+
+    const isRolesSubMenuOpen = useSidebar(state => state.isRolesSubMenuOpen)
+    const setIsRolesSubMenuOpen = useSidebar(state => state.setIsRolesSubMenuOpen)
     
     const handleClickAway = () => {
         setMobileSubmenu(false)
@@ -17,37 +27,80 @@ const MobileSidebar: React.FC = () => {
         <ClickAwayListener onClickAway={handleClickAway}>
         {mobileSubmenu ?
             <div className="">
-                <CloseOutlined className="fixed block lg:hidden top-5 left-5 text-white cursor-pointer z-50" onClick={() => setMobileSubmenu(false)} />
-                <aside className="fixed z-20 top-0 pt-14 lg:hidden md:w-56 bg-white dark:bg-gray-10 h-screen overflow-y-auto ">
-                    <div className="relative h-full py-2">
-                        <div className="pb-2 ">
-                            <img src="/submenulogo.png" alt="Passport logo"  />
-                        </div> 
-                        <hr />
-                        <>
-                            <SideMenuItem href="/profile" title="User Profile">
-                                <UserOutlined />
-                            </SideMenuItem>
-                            <SideMenuItem href="/account-settings" title="Account Settings">
-                                <SettingOutlined />
-                            </SideMenuItem>
-                            <SideMenuItemCollapse title="User Roles & Permissions" icon={<BuildOutlined />}>
-                                <>
-                                    <CollapsedSideMenuItem href="/roles-permissions" title="Roles & Permissions"/>
-                                    <CollapsedSideMenuItem href="/user-groups" title="User Groups" />
-                                    <CollapsedSideMenuItem href="/user-list" title="User List" />
-                                </>
-                            </SideMenuItemCollapse>
-                        </>
-                        <SidebarFooterMenu />
-                    </div>
-                </aside>
+                <CloseOutlined className="fixed block lg:hidden top-6 left-5 text-white cursor-pointer z-50" onClick={() => setMobileSubmenu(false)} />
+                <Sidebar 
+                    isOpen={true} 
+                    setIsOpen={() => {}} 
+                    extraClassname="lg:!hidden !block !md:w-56" 
+                    theme={theme} 
+                    setTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                    hideOnMobile={true}
+                >
+                    <div className="pb-2 ">
+                        <img src="/submenulogo.png" alt="Passport logo"  />
+                    </div> 
+                    {/* <hr /> */}
+                    <>
+                        <Link href="/profile">
+                            <MenuItem 
+                                href="/profile" 
+                                title="User Profile" 
+                                active={router.pathname.split("?")[0].startsWith("/profile")} 
+                                /*// @ts-ignore */ 
+                                onClick={() => setMobileSubmenu(false)}
+                            >
+                                    
+                                <RiUserFill />
+                            </MenuItem>
+                        </Link>
+                        <Link href="/account-settings">
+                            <MenuItem 
+                            href="/account-settings" 
+                            title="Account Settings" 
+                            active={router.pathname.split("?")[0].startsWith("/account-settings")} 
+                            /*// @ts-ignore */ 
+                            onClick={() => setMobileSubmenu(false)}
+                        >
+                                <RiSettingsFill />
+                            </MenuItem>
+                        </Link>
+                        <MenuItemSelection title="User Roles & Permission" icon={<RiDashboard3Line />} isSubMenuOpen={isRolesSubMenuOpen} setIsSubMenuOpen={() => setIsRolesSubMenuOpen(!isRolesSubMenuOpen)} pathname={router.pathname}>
+                            <Link href="/roles-permissions">
+                                <SubMenuItem 
+                                    href="/roles-permissions" 
+                                    title="Roles & Permissions" 
+                                    active={router.pathname.split("?")[0].startsWith("/roles-permissions") }
+                                    /*// @ts-ignore */  
+                                    onClick={() => setMobileSubmenu(false)} 
+                                />
+                            </Link>
+                            <Link href="/user-groups">
+                                <SubMenuItem 
+                                    href="user-groups" 
+                                    title="User Groups" 
+                                    active={router.pathname.split("?")[0].startsWith("/user-groups") } 
+                                    /*// @ts-ignore */ 
+                                    onClick={() => setMobileSubmenu(false)} 
+                                />
+                            </Link>
+                            <Link href="/user-list">
+                                <SubMenuItem 
+                                    href="user-list" 
+                                    title="User List" 
+                                    active={router.pathname.split("?")[0].startsWith("/user-list") } 
+                                    /*// @ts-ignore */ 
+                                    onClick={() => setMobileSubmenu(false)} 
+                                />
+                            </Link>
+                        </MenuItemSelection>
+                    </>
+                </Sidebar>
             </div>
             :
             <div className="">
-                <MenuOutlined className="fixed top-5 left-5 block lg:hidden text-white cursor-pointer z-50" onClick={() => setMobileSubmenu(true)} />
+                <MenuOutlined className="fixed top-6 left-5 block lg:hidden text-white cursor-pointer " onClick={() => setMobileSubmenu(true)} />
             </div>
-        }
+        } 
         </ClickAwayListener>
     )
 }
