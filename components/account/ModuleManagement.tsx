@@ -11,7 +11,7 @@ const ModuleManagement = () => {
                     button={<ModuleAccessButton style="border-gray-5 text-gray-6" type="button" disabled={true}>Default Access</ModuleAccessButton>}
                 >
                     <div className="">
-                        <p className="border border-gray-5 inline-block px-2 py-1 rounded-sm bg-gray-2">Member</p>
+                        <p className="border border-gray-5 dark:bg-gray-8 inline-block px-2 py-1 rounded-sm bg-gray-2">Member</p>
                     </div>
                 </ModuleSection>
                 <ModuleSection
@@ -20,7 +20,7 @@ const ModuleManagement = () => {
                     button={<ModuleAccessButton style="border-gray-5 text-gray-6" type="button" disabled={true}>Default Access</ModuleAccessButton>}
                 >
                     <div className="">
-                        <p className="border border-gray-5 inline-block px-2 py-1 rounded-sm bg-gray-2">Member</p>
+                        <p className="border border-gray-5 dark:bg-gray-8 inline-block px-2 py-1 rounded-sm bg-gray-2">Member</p>
                     </div>
                 </ModuleSection>
                 <ModuleSection
@@ -29,19 +29,19 @@ const ModuleManagement = () => {
                     button={<ModuleAccessButton style="border-gray-5 text-gray-6" type="button" disabled={true}>Default Access</ModuleAccessButton>}
                 >
                     <div className="">
-                        <p className="border border-gray-5 inline-block px-2 py-1 rounded-sm bg-gray-2">Member</p>
+                        <p className="border border-gray-5 dark:bg-gray-8 inline-block px-2 py-1 rounded-sm bg-gray-2">Member</p>
                     </div>
                 </ModuleSection>
                 <hr />
                 <ModuleSection
                     sectionName="500 Applications"
                     sectionDescription="Program Application Management"
-                    button={<ModuleAccessButton style="border-gray-9 text-gray-9" type="button" disabled={true}>I no longer need access</ModuleAccessButton>}
+                    button={<ModuleAccessButton style="border-gray-9 dark:border-gray-1 dark:text-gray-1 text-gray-9" type="button" disabled={true}>I no longer need access</ModuleAccessButton>}
                 >
                     <div className="space-x-1 space-y-1">
-                        <p className="border border-gray-5 inline-block px-2 py-1 rounded-sm bg-gray-2">Member</p>
-                        <p className="border border-gray-5 inline-block px-2 py-1 rounded-sm bg-gray-2">Applicant</p>
-                        <p className="border border-gray-5 inline-block px-2 py-1 rounded-sm bg-gray-2">Manager</p>
+                        <p className="border inline-block text-xs border-gray-5 dark:bg-gray-8 px-2 py-1 rounded-sm bg-gray-2">Member</p>
+                        <p className="border inline-block text-xs border-gray-5 dark:bg-gray-8 px-2 py-1 rounded-sm bg-gray-2">Applicant</p>
+                        <p className="border inline-block text-xs border-gray-5 dark:bg-gray-8 px-2 py-1 rounded-sm bg-gray-2">Manager</p>
                     </div>
                 </ModuleSection>
                 <hr />

@@ -9,19 +9,19 @@ const AccountManagement = () => {
         <FormContentPanel id="account management" title="Account Management" subtitle="Control your 500 Passport account.">
             <div className="space-y-6">
                 <SettingsSection sectionName="Set Timezone" sectionDescription="Change your timezone settings">
-                        <p className="text-gray-9 text-sm">UTC−06:00 (CT) — Central Time zone</p>
+                        <p className=" text-sm">UTC−06:00 (CT) — Central Time zone</p>
                 </SettingsSection>
                 <hr />
                 <SettingsSection sectionName="Set Language" sectionDescription="Change your default language">
-                        <p className="text-gray-9 text-sm">English</p>
+                        <p className=" text-sm">English</p>
                 </SettingsSection>
                 <hr />
                 <SettingsSection sectionName="Deactivate Account" sectionDescription="Temporarily deactivate your account">
-                        <p className="text-gray-9 text-sm"></p>
+                        <p className=" text-sm"></p>
                 </SettingsSection>
                 <hr />
                 <SettingsSection sectionName="Delete Account" sectionDescription="Learn about deleting your account">
-                        <p className="text-gray-9 text-sm"></p>
+                        <p className=" text-sm"></p>
                 </SettingsSection>
             </div>
         </FormContentPanel>

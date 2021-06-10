@@ -3,6 +3,9 @@ import InformationAndSecurity from "./InformationAndSecurity"
 import ProfileSectionNav from 'components/profile/ProfileSectionNav'
 import AccountManagement from "./AccountManagement"
 import ModuleManagement from "./ModuleManagement"
+import {NavSectionScroll} from 'components/profile/ProfileSectionNavMobile'
+
+const sections = ['information & security', 'communication preferences', 'account management', 'module management']
 
 const AccountSettings = () => {
 
@@ -16,8 +19,9 @@ const AccountSettings = () => {
             </div>
 
             <div className="edit-profile-side">
-              <div className="p-6 sticky top-20">
-                <ProfileSectionNav sections={['information & security', 'communication preferences', 'account management', 'module management']} />
+              <div className="lg:p-6 py-1 sticky md:top-20">
+                <ProfileSectionNav sections={sections} />
+                <NavSectionScroll sections={sections}/>
               </div>
             </div>
         </div>

@@ -1,8 +1,9 @@
 import React from "react"
 import { useTranslation } from 'next-i18next'
-import { PrimaryButton } from "components/common/Button"
+import { PrimaryButton, DarkTransparentButton } from "components/common/Button"
 import ProfileMenu from "./ProfileMenu"
 import { useRouter } from 'next/router'
+import ProfileMenuVisitorMode from "./ProfileMenuVisitorMode"
 
 type User = {
     firstName: string,
@@ -19,10 +20,11 @@ type User = {
 interface Props {
     data: {
         User: User
-    }
+    },
+    visitorMode?: boolean
 }
 
-const PersonalInfoPanel: React.FC<Props> = ({data}) => {
+const PersonalInfoPanel: React.FC<Props> = ({data, visitorMode = false}) => {
     // const { t } = useTranslation('signup')
     const router = useRouter()
 
@@ -38,7 +40,7 @@ const PersonalInfoPanel: React.FC<Props> = ({data}) => {
     }
 
     return (
-        <div className="bg-white mt-10">
+        <div className="section-bg mt-10">
             <div className="px-5 py-6 pb-8 md:pb-14 sm:flex md:block lg:flex flex-wrap sm:justify-between ">
                 <div className="flex relative space-x-6 w-full md:w-full xl:w-2/3">
                     <div className="mr-40">
@@ -59,15 +61,23 @@ const PersonalInfoPanel: React.FC<Props> = ({data}) => {
 
                 <div className="mt-28 md:mt-20 xl:mt-0  md:text-left xl:text-right w-full xl:w-1/3">
                     <p className="text-sm text-gray-6">Last update: Jan 29, 2021</p>
-                    <button className="bg-primary-blue text-white text-xs sm:text-sm px-4 py-1 rounded my-1" onClick={handleRouteToPersonalInfoForm}>
+                    {visitorMode ?
+                    <DarkTransparentButton type="button">
+                        Connect / Message
+                    </DarkTransparentButton>
+                    :
+                    <PrimaryButton type="button" onClick={handleRouteToPersonalInfoForm} extraStyle="!py-1">
                         Edit personal info
-                    </button>
+                    </PrimaryButton>
+                    }
                 </div>
             </div>
             <hr className="" />
-            {/* If user profile has been added, show tabs/profiles navigation instead */}
             <div className=" ">
-                <ProfileMenu data={data} />
+                {visitorMode ?
+                <ProfileMenuVisitorMode data={data} />
+                :
+                <ProfileMenu data={data} />}
             </div>
         </div>
     )

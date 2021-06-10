@@ -10,7 +10,7 @@ interface Props {
 
 const FormContentPanel: React.FC<Props> = ({title, subtitle, children, id}) => {
     return (
-        <div className="bg-white p-6 pb-10" id={id}>
+        <div className="bg-white dark:bg-gray-10 p-6 pb-10" id={id}>
             <h1 className="main-title">{title}</h1>
             <p className="sub-title">{subtitle}</p>
             <hr className="my-6" />

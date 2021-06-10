@@ -1,7 +1,7 @@
 import {useForm, Controller, useFieldArray} from "react-hook-form";
 import React, {useState, useEffect, forwardRef} from 'react'
 import FormContentPanel from './FormContentPanel';
-import { TextInput, TextInputInline, TextArea, InputCheckbox, InputRadio, AsyncMultiSelectionInput } from 'components/common/Input';
+import { TextInput, TextInputInline, TextArea, InputCheckbox, InputRadio, AsyncMultiSelectionInput, SelectInput, TextInputInlineWithIcon } from 'components/common/Input';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {DownOutlined, CloseOutlined} from '@ant-design/icons'
@@ -11,7 +11,7 @@ import {useMutation, useQueryClient} from "react-query";
 import { request, gql } from "graphql-request";
 import {useRouter} from 'next/router'
 import ProfileFormSidePanel from "./ProfileFormSidePanel";
-import {buildArrayValueForReactSelect, buildObjectValueForReactSelect, getArrayOfValueFromReactSelect, getStringValueFromReactSelect} from 'lib/utils'
+import {buildArrayValueForReactSelect, buildObjectValueForReactSelect, getArrayOfValueFromReactSelect, getStringValueFromReactSelect, checkFieldArrayCompletion} from 'lib/utils'
 import {endpoint} from 'config'
 import useCompletionStatus from 'lib/useCompletionStatus'
 
@@ -89,7 +89,7 @@ const CompanyProfileForm = ({profileData}) => {
             companyFounded: profileData[0]?.companyFounded ? profileData[0].companyFounded : "",
             companyWebsite: profileData[0]?.companyWebsite ? profileData[0].companyWebsite : "",
             sectors: [],
-            stage: profileData[0]?.stage ? buildObjectValueForReactSelect(profileData[0].stage) : {},
+            stage: profileData[0]?.stage ? buildObjectValueForReactSelect(profileData[0].stage) : null,
             businessModel: profileData[0]?.businessModel ? profileData[0].businessModel : "",
             describeCompany: profileData[0]?.describeCompany ? profileData[0].describeCompany : "",
             describeBusinessModel: profileData[0]?.describeBusinessModel ? profileData[0].describeBusinessModel : "",
@@ -108,22 +108,13 @@ const CompanyProfileForm = ({profileData}) => {
     
     const sectors = useList(profileData[0]?.sectors?.length > 0 ? buildArrayValueForReactSelect(profileData[0].sectors) : [], 3)
 
-    const checkFieldArrayCompletion = (arr): boolean => {
-        for (let i in arr[0]) {
-            if (arr[0][i]) {
-                return true
-            }
-            return false
-        }
-    }
-
     const companyProfile = useCompletionStatus({
         companyName: watchAllFields.companyName,
         linkedinProfile: watchAllFields.linkedinProfile,
         companyFounded: watchAllFields.companyFounded,
         companyWebsite: watchAllFields.companyWebsite,
         sectors: sectors.list.length,
-        stage: watchAllFields.stage.value,
+        stage: watchAllFields.stage ? watchAllFields.stage.value : watchAllFields.stage,
         businessModel: watchAllFields.businessModel,
         describeCompany: watchAllFields.describeCompany,
         describeBusinessModel: watchAllFields.describeBusinessModel,
@@ -184,7 +175,7 @@ const CompanyProfileForm = ({profileData}) => {
             companyWebsite: data.companyWebsite,
             companyLogo: "",
             sectors: getArrayOfValueFromReactSelect(sectors.list),
-            stage: getStringValueFromReactSelect(data.stage) || "",
+            stage: getStringValueFromReactSelect(data.stage),
             businessModel: data.businessModel,
             describeCompany: data.describeCompany,
             describeBusinessModel: data.describeBusinessModel,
@@ -280,22 +271,15 @@ const CompanyProfileForm = ({profileData}) => {
                             subLabel="Choose up to 3 sectors"
                             placeholder="Type in your sector..."
                         />
-                        <div className="">
-                            <label htmlFor="stage" className="profile-form-label">What is the current stage of your company?</label>
-                            <Controller
-                                name="stage"
-                                control={control}
-                                render={({ field }) => 
-                                    <Select 
-                                        inputId="stage"
-                                        {...field} 
-                                        className="w-40 pt-2"
-                                        options={stageList} 
-                                        placeholder="Please Select"
-                                    />
-                                }
-                            />
-                        </div>
+                        <SelectInput 
+                            inputName="stage"
+                            labelClassName="profile-form-label"
+                            labelText="What is the current stage of your company?"
+                            control={control}
+                            placeholder="Please Select"
+                            optionsArray={stageList}
+                            inputStyle="pt-2 w-40"
+                        />
                         <InputRadio 
                             register={register}
                             inputName="businessModel"
@@ -484,11 +468,10 @@ const CompanyProfileForm = ({profileData}) => {
                             labelClassName="profile-form-label"
                             radioList={["yes", "no"]}
                         />
-                        <TextInputInline
+                        <TextInputInlineWithIcon
                             register={register}
                             errors={errors}
                             inputName="fundraisingTarget"
-                            placeholder="$"
                             type="text"
                             validation={{
                                 pattern: {

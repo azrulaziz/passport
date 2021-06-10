@@ -3,13 +3,12 @@ import {PrimaryButton} from 'components/common/Button'
 import { useRouter } from 'next/router'
 import Link from "next/link";
 
-
 const ProfileMenu = ({data}) => {
     const router = useRouter()
     if (data?.User?.UserProfiles?.length < 1) {
         return (
             <div className="px-5 py-2 flex flex-wrap items-center justify-between ">
-                <p className="text-sm text-gray-10">Your profile is empty! Add user profile for others to view.</p>
+                <p className="text-sm">Your profile is empty! Add user profile for others to view.</p>
                 <PrimaryButton type="button" onClick={() => router.push('/profile/edit-user-profile')}>Add User Profile</PrimaryButton>
             </div>
         )

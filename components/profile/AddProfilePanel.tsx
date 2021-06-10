@@ -11,10 +11,10 @@ interface BoxProps {
 const AddProfileBox: React.FC<BoxProps> = ({title, buttonText, link}) => {
     const router = useRouter()
     return (
-        <div className="border-primary-blue border-l-4 bg-white">
-            <div className="border-2 border-l-0">
+        <div className="border-primary-blue border-l-4 section-bg">
+            <div className="border-2 border-l-0 dark:border-secondary-gray">
                 <div className="py-4 px-3">
-                    <p className="text-gray-8 text-sm mb-2">{title}</p>
+                    <p className="text-gray-8 dark:text-gray-6 text-sm mb-2">{title}</p>
                     <PrimaryTransparentButton onClick={() => router.push(link)}>{buttonText}</PrimaryTransparentButton>
                 </div>
             </div>
